@@ -462,7 +462,7 @@ exports.forgetPassword = async (req, res) => {
       email,
       otp,
       "sonipushpendra256@gmail.com",
-      "xyhn ujvz lknw eapm" // Make sure to use environment variables for security
+      "xyhn ujvz lknw eapm"
     );
 
     if (!isOtpSent) {

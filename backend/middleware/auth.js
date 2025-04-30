@@ -75,14 +75,13 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid user" });
     }
 
-    // Set the user info on the req object
     req.user = {
       id: user._id,
       email: user.email,
       role: user.role,
     };
 
-    next(); // Proceed to the next middleware or route handler
+    next();
   } catch (error) {
     console.error("Error verifying token:", error);
     res.status(401).json({ message: "Invalid token or error occurred" });

@@ -1,4 +1,3 @@
-// src/api/locationApi.js
 import axios from "axios";
 
 const BASE_URL = "http://localhost:6001/location";
@@ -11,7 +10,6 @@ const authHeader = () => ({
     },
 });
 
-// 👇 Update routes to match your backend
 export const getLocations = () =>
     axios.get(`${BASE_URL}/get-all`, authHeader());
 

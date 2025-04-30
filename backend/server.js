@@ -28,24 +28,22 @@
 
 
 const express = require("express");
-require("dotenv").config(); // Load env variables
+require("dotenv").config();
 const cors = require("cors");
 
-const connectDb = require("./db/dataBase"); // Connect MongoDB
+const connectDb = require("./db/dataBase");
 const userRoutes = require("./routes/userRoutes");
 const locationRoutes = require("./routes/locationRoutes");
 
 const app = express();
-const port = process.env.PORT || 6001; // Fallback just in case
+const port = process.env.PORT || 6001;
 
 app.use(cors());
 app.use(express.json());
 
-// API Routes
 app.use("/user", userRoutes);
 app.use("/location", locationRoutes);
 
-// Connect DB and Start Server
 connectDb();
 
 app.listen(port, () => {

@@ -58,7 +58,6 @@ const LogIn = () => {
           <h2 className="text-4xl text-gray-900 font-semibold">Log In</h2>
           <p className="text-sm text-gray-500 mt-3">Welcome back! Please sign in to continue</p>
 
-          {/* Google login */}
           <button
             type="button"
             className="w-full mt-8 bg-gray-100 flex items-center justify-center h-12 rounded-full shadow-md hover:bg-gray-200 transition-all"
@@ -71,7 +70,6 @@ const LogIn = () => {
             <span className="ml-3 text-gray-700">Continue with Google</span>
           </button>
 
-          {/* Email input */}
           <div className="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2 mt-6">
             <svg
               width="16"
@@ -123,7 +121,6 @@ const LogIn = () => {
             />
           </div>
 
-          {/* Remember me and forgot password */}
           <div className="w-full flex items-center justify-between mt-8 text-gray-500/80">
             <div className="flex items-center gap-2">
               <input className="h-5" type="checkbox" id="checkbox" />
@@ -132,7 +129,6 @@ const LogIn = () => {
               </label>
             </div>
 
-            {/* ✅ Corrected Forgot Password link */}
             <NavLink
               to="/forget-password"
               className="text-sm underline text-indigo-500 hover:text-indigo-600"
@@ -141,7 +137,6 @@ const LogIn = () => {
             </NavLink>
           </div>
 
-          {/* Login button */}
           <button
             type="submit"
             className="mt-8 w-full h-12 rounded-full text-white bg-indigo-600 hover:bg-indigo-500 transition-all"
@@ -149,7 +144,6 @@ const LogIn = () => {
             Login
           </button>
 
-          {/* Sign-up link */}
           <p className="text-gray-500/80 text-sm mt-4">
             Don’t have an account?{" "}
             <a className="text-indigo-400 hover:underline" href="/sign-up">

@@ -61,13 +61,11 @@ const SignUp = () => {
         </div>
       </div>
 
-      {/* Sign Up Form */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <h2 className="text-3xl text-center text-gray-800 font-semibold">SIGN UP</h2>
 
-            {/* Name */}
             <input
               type="text"
               name="name"
@@ -78,7 +76,6 @@ const SignUp = () => {
               required
             />
 
-            {/* Email */}
             <input
               type="email"
               name="email"
@@ -89,7 +86,6 @@ const SignUp = () => {
               required
             />
 
-            {/* Phone */}
             <input
               type="text"
               name="phone"
@@ -100,7 +96,6 @@ const SignUp = () => {
               required
             />
 
-            {/* Age */}
             <input
               type="number"
               name="age"
@@ -111,7 +106,6 @@ const SignUp = () => {
               required
             />
 
-            {/* Gender */}
             <select
               name="gender"
               value={formData.gender}
@@ -125,7 +119,6 @@ const SignUp = () => {
               <option value="other">Other</option>
             </select>
 
-            {/* Password */}
             <input
               type="password"
               name="password"
@@ -136,7 +129,6 @@ const SignUp = () => {
               required
             />
 
-            {/* Submit Button */}
             <button
               type="submit"
               className="w-full h-12 rounded-xl bg-indigo-600 text-white text-lg font-semibold hover:bg-indigo-500 transition-all"
@@ -144,7 +136,6 @@ const SignUp = () => {
               Sign Up
             </button>
 
-            {/* Login Link */}
             <p className="text-center text-sm text-gray-600">
               Already have an account?{" "}
               <NavLink to="/" className="text-indigo-600 hover:underline">

@@ -27,7 +27,6 @@ const ForgetPassword = () => {
         email: email.trim().toLowerCase(),
       });
 
-      // Navigate to reset password page and pass the email in state
       navigate("/reset-password", { state: { email } });
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {

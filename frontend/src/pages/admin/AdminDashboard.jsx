@@ -471,11 +471,9 @@ const AdminDashboard = () => {
         </ul>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 p-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-8">Manage Locations</h1>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="mb-8 bg-white rounded-xl shadow-md p-6 flex flex-wrap gap-4 items-end"
@@ -504,7 +502,6 @@ const AdminDashboard = () => {
           </button>
         </form>
 
-        {/* Search and Sort */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
           <input
             type="text"
