@@ -87,37 +87,154 @@
 
 
 
+// import React from "react";
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import SignUp from "./pages/auth/SignUp";
+// import LogIn from "./pages/auth/Login";
+// import Otp from "./pages/auth/Otp";
+// import AdminDashboard from "./pages/admin/AdminDashboard";
+// import User from "./pages/users/user";
+// import ForgetPassword from "./pages/auth/ForgetPassword";
+// import ProtectedRoute from "./routes/ProtectedRoute";
+// import ResetPassword from "./pages/auth/ResetPassword";
+
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <LogIn />,
+//   },
+//   {
+//     path: "/sign-up",
+//     element: <SignUp />,
+//   },
+//   {
+//     path: "/verification",
+//     element: <Otp />,
+//   },
+//   {
+//     path: "/dashboard",
+//     element: (
+//       <ProtectedRoute allowedRole="admin">
+//         <AdminDashboard />
+//       </ProtectedRoute>
+//     ),
+//   },
+//   {
+//     path: "/user",
+//     element: (
+//       <ProtectedRoute allowedRole="user">
+//         <User />
+//       </ProtectedRoute>
+//     ),
+//   },
+//   {
+//     path: "/forget-password",
+//     element: <ForgetPassword />,
+//   },
+//   {
+//     path: "/reset-password",
+//     element: <ResetPassword />,
+//   },
+// ]);
+
+// const App = () => {
+//   return <RouterProvider router={router} />;
+// };
+
+// export default App;
+
+
+
+
+
+
+// import React from "react";
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import SignUp from "./pages/auth/SignUp";
+// import LogIn from "./pages/auth/Login";
+// import Otp from "./pages/auth/Otp";
+// import AdminDashboard from "./pages/admin/AdminDashboard";
+// import User from "./pages/users/user";
+// import ForgetPassword from "./pages/auth/ForgetPassword";
+// import ResetPassword from "./pages/auth/ResetPassword";
+// import State from "./pages/admin/State";
+// import ProtectedRoute from "./routes/ProtectedRoute";
+
+// const router = createBrowserRouter([
+//   { path: "/", element: <LogIn /> },
+//   { path: "/sign-up", element: <SignUp /> },
+//   { path: "/verification", element: <Otp /> },
+//   {
+//     path: "/dashboard",
+//     element: (
+//       <ProtectedRoute allowedRole="admin">
+//         <AdminDashboard />
+//       </ProtectedRoute>
+//     ),
+//   },
+//   {
+//     path: "/state",
+//     element: (
+//       <ProtectedRoute allowedRole="admin">
+//         <State />
+//       </ProtectedRoute>
+//     ),
+//   },
+//   {
+//     path: "/user",
+//     element: (
+//       <ProtectedRoute allowedRole="user">
+//         <User />
+//       </ProtectedRoute>
+//     ),
+//   },
+//   { path: "/forget-password", element: <ForgetPassword /> },
+//   { path: "/reset-password", element: <ResetPassword /> },
+// ]);
+
+// const App = () => {
+//   return <RouterProvider router={router} />;
+// };
+
+// export default App;
+
+
+
+
+
+
+
+
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SignUp from "./pages/auth/SignUp";
 import LogIn from "./pages/auth/Login";
 import Otp from "./pages/auth/Otp";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import User from "./pages/users/user";
 import ForgetPassword from "./pages/auth/ForgetPassword";
-import ProtectedRoute from "./routes/ProtectedRoute";
 import ResetPassword from "./pages/auth/ResetPassword";
+import User from "./pages/users/user";
+import AdminLayout from "./layouts/AdminLayout";
+import State from "./pages/admin/State";
+import Location from "./pages/admin/Location";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const router = createBrowserRouter([
+  { path: "/", element: <LogIn /> },
+  { path: "/sign-up", element: <SignUp /> },
+  { path: "/verification", element: <Otp /> },
+  { path: "/forget-password", element: <ForgetPassword /> },
+  { path: "/reset-password", element: <ResetPassword /> },
   {
-    path: "/",
-    element: <LogIn />,
-  },
-  {
-    path: "/sign-up",
-    element: <SignUp />,
-  },
-  {
-    path: "/verification",
-    element: <Otp />,
-  },
-  {
-    path: "/dashboard",
+    path: "/admin",
     element: (
       <ProtectedRoute allowedRole="admin">
-        <AdminDashboard />
+        <AdminLayout />
       </ProtectedRoute>
     ),
+    children: [
+      { path: "dashboard", element: <Location /> },
+      { path: "state", element: <State /> },
+    ],
   },
   {
     path: "/user",
@@ -126,14 +243,6 @@ const router = createBrowserRouter([
         <User />
       </ProtectedRoute>
     ),
-  },
-  {
-    path: "/forget-password",
-    element: <ForgetPassword />,
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />,
   },
 ]);
 

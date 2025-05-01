@@ -283,44 +283,37 @@ exports.createUsers = async (req, res) => {
   try {
     const { name, email, phone, age, gender, password, role } = req.body;
 
-    // Validate required fields
     if (!email || !name || !password || !phone || !age || !gender) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // Check if email already exists
     const existingEmail = await userModel.findOne({ email });
     if (existingEmail) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Generate OTP and expiration
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpTimer = moment().add(10, "minutes").toDate();
 
-    // Create user (plain password - will be hashed in pre('save'))
     const newUser = new userModel({
       name,
       email,
       phone,
       age,
       gender,
-      password, // plain password
+      password,
       otp,
       otpExpire: otpTimer,
       role: role || "user",
     });
 
-    // Save user (password will be hashed automatically)
     await newUser.save();
 
-    // Send OTP email
     const isOtpSent = await sendOtpEmail(email, otp, "sonipushpendra256@gmail.com", "yourAppPasswordHere");
     if (!isOtpSent) {
       return res.status(500).json({ message: "Failed to send OTP email" });
     }
 
-    // Generate token
     const token = jwt.sign(
       {
         email: newUser.email,
@@ -330,7 +323,6 @@ exports.createUsers = async (req, res) => {
       process.env.secretKey
     );
 
-    // Respond
     return res.status(200).json({
       message: "User created and OTP sent",
       email: newUser.email,
@@ -388,12 +380,10 @@ exports.resendOtp = async (req, res) => {
   const newOtp = generateOTP;
   const otpExpiry = Date.now() + 5 * 60 * 1000;
 
-  // Update user OTP
   user.otp = newOtp;
   user.otpExpire = otpExpiry;
   await user.save();
 
-  // Send the new OTP email
   const isOtpSent = await sendOtpEmail(user.email, newOtp, "sonipushpendra256@gmail.com", "yourAppPasswordHere");
   if (!isOtpSent) {
     return res.status(500).json({ message: "Failed to resend OTP email" });
@@ -494,7 +484,6 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: "OTP has expired" });
     }
 
-    // Don't hash again here — pre('save') will handle it
     user.password = password;
     user.otp = null;
     user.otpExpire = null;
