@@ -205,6 +205,62 @@
 
 
 
+// import React from "react";
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import SignUp from "./pages/auth/SignUp";
+// import LogIn from "./pages/auth/Login";
+// import Otp from "./pages/auth/Otp";
+// import ForgetPassword from "./pages/auth/ForgetPassword";
+// import ResetPassword from "./pages/auth/ResetPassword";
+// import User from "./pages/users/user";
+// import AdminLayout from "./layouts/AdminLayout";
+// import State from "./pages/admin/State";
+// import Location from "./pages/admin/Location";
+// import ProtectedRoute from "./routes/ProtectedRoute";
+
+// const router = createBrowserRouter([
+//   { path: "/", element: <LogIn /> },
+//   { path: "/sign-up", element: <SignUp /> },
+//   { path: "/verification", element: <Otp /> },
+//   { path: "/forget-password", element: <ForgetPassword /> },
+//   { path: "/reset-password", element: <ResetPassword /> },
+//   {
+//     path: "/admin",
+//     element: (
+//       <ProtectedRoute allowedRole="admin">
+//         <AdminLayout />
+//       </ProtectedRoute>
+//     ),
+//     children: [
+//       { path: "dashboard", element: <Location /> },
+//       { path: "state", element: <State /> },
+//     ],
+//   },
+//   {
+//     path: "/user",
+//     element: (
+//       <ProtectedRoute allowedRole="user">
+//         <User />
+//       </ProtectedRoute>
+//     ),
+//   },
+// ]);
+
+// const App = () => {
+//   return <RouterProvider router={router} />;
+// };
+
+// export default App;
+
+
+
+
+
+
+
+
+
+
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SignUp from "./pages/auth/SignUp";
@@ -216,6 +272,7 @@ import User from "./pages/users/user";
 import AdminLayout from "./layouts/AdminLayout";
 import State from "./pages/admin/State";
 import Location from "./pages/admin/Location";
+import Hotel from "./pages/admin/Hotel";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 const router = createBrowserRouter([
@@ -234,6 +291,7 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <Location /> },
       { path: "state", element: <State /> },
+      { path: "hotels", element: <Hotel /> },
     ],
   },
   {

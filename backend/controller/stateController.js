@@ -81,6 +81,16 @@ exports.getAllStates = async (req, res) => {
     }
 };
 
+
+// exports.getAllStates = async (req, res) => {
+//     try {
+//         const states = await State.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+//         res.status(200).json({ success: true, data: states });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: "Error fetching states", error: error.message });
+//     }
+// };
+
 exports.updateState = async (req, res) => {
     try {
         const { id } = req.params;
