@@ -309,7 +309,7 @@ exports.createUsers = async (req, res) => {
 
     await newUser.save();
 
-    const isOtpSent = await sendOtpEmail(email, otp, "sonipushpendra256@gmail.com", "yourAppPasswordHere");
+    const isOtpSent = await sendOtpEmail(email, otp, "sonipushpendra256@gmail.com", "xyhn ujvz lknw eapm");
     if (!isOtpSent) {
       return res.status(500).json({ message: "Failed to send OTP email" });
     }
@@ -384,7 +384,7 @@ exports.resendOtp = async (req, res) => {
   user.otpExpire = otpExpiry;
   await user.save();
 
-  const isOtpSent = await sendOtpEmail(user.email, newOtp, "sonipushpendra256@gmail.com", "yourAppPasswordHere");
+  const isOtpSent = await sendOtpEmail(user.email, newOtp, "sonipushpendra256@gmail.com", "xyhn ujvz lknw eapm");
   if (!isOtpSent) {
     return res.status(500).json({ message: "Failed to resend OTP email" });
   }
