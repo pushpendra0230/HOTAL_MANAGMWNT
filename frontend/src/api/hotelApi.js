@@ -13,7 +13,7 @@ export const updateHotel = (hotelId, hotelData) => {
 };
 
 export const toggleHotelStatus = (hotelId) => {
-    return instance.patch(`/api/hotels/${hotelId}/toggle`);
+    return instance.patch(`/api/hotels/toggle-status/${hotelId}`);
 };
 
 export const deleteHotel = (hotelId) => {

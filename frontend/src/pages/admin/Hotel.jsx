@@ -426,14 +426,18 @@ const Hotel = () => {
         }
 
         try {
+            const payload = { ...formData, rooms: totalRooms };
+            delete payload.totalRooms;
+
             if (editingId) {
-                await updateHotel(editingId, formData);
+                await updateHotel(editingId, payload);
             } else {
-                await addHotel(formData);
+                await addHotel(payload);
             }
+
             resetForm();
             fetchHotels();
-            console.log("Submitting hotel data:", formData);
+            console.log("Submitting hotel data:", payload);
         } catch (err) {
             console.error("Error submitting hotel", err);
             setError("Something went wrong while saving hotel.");
@@ -467,6 +471,7 @@ const Hotel = () => {
 
     const handleToggle = async (id) => {
         try {
+            console.log("Toggling hotel with ID:", id);
             await toggleHotelStatus(id);
             fetchHotels();
         } catch (err) {
