@@ -558,7 +558,267 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import {
+//   getLocations,
+//   addLocation,
+//   updateLocation,
+//   toggleStatus,
+//   deleteLocation,
+// } from "../../api/locationApi";
+// import { getStates } from "../../api/stateApi";
+
+// const Location = () => {
+//   const [locations, setLocations] = useState([]);
+//   const [states, setStates] = useState([]);
+//   const [formData, setFormData] = useState({ city: "", state: "" });
+//   const [editingId, setEditingId] = useState(null);
+//   const [search, setSearch] = useState("");
+//   const [sortBy, setSortBy] = useState("city");
+//   const [error, setError] = useState("");
+
+//   useEffect(() => {
+//     loadLocations();
+//     loadStates();
+//   }, []);
+
+//   const loadLocations = async () => {
+//     try {
+//       const res = await getLocations();
+//       setLocations(res.data);
+//     } catch (err) {
+//       console.error("Error loading locations:", err);
+//       setError("Failed to fetch locations.");
+//     }
+//   };
+
+//   const loadStates = async () => {
+//     try {
+//       const res = await getStates();
+//       console.log("Fetched states:", res.data);
+
+//       const stateList = Array.isArray(res.data)
+//         ? res.data
+//         : Array.isArray(res.data.data)
+//           ? res.data.data
+//           : [];
+
+//       setStates(stateList.filter((s) => s.isActive));
+//     } catch (err) {
+//       console.error("Error loading states:", err);
+//       setError("Failed to fetch states.");
+//       setStates([]);
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!formData.city || !formData.state) {
+//       setError("Both city and state are required.");
+//       return;
+//     }
+
+//     try {
+//       if (editingId) {
+//         await updateLocation(editingId, formData);
+//       } else {
+//         await addLocation(formData);
+//       }
+//       resetForm();
+//       loadLocations();
+//     } catch (err) {
+//       console.error("Error saving location:", err);
+//       setError(err?.response?.data?.error || "Something went wrong.");
+//     }
+//   };
+
+//   const resetForm = () => {
+//     setFormData({ city: "", state: "" });
+//     setEditingId(null);
+//     setError("");
+//   };
+
+//   const handleEdit = (location) => {
+//     if (!location.active) return;
+//     setFormData({ city: location.city, state: location?.state?._id || "" });
+//     setEditingId(location._id);
+//   };
+
+//   const handleDelete = async (id) => {
+//     if (window.confirm("Are you sure you want to delete this location?")) {
+//       try {
+//         await deleteLocation(id);
+//         loadLocations();
+//       } catch (err) {
+//         console.error("Error deleting location:", err);
+//       }
+//     }
+//   };
+
+//   const handleToggle = async (id) => {
+//     try {
+//       await toggleStatus(id);
+//       loadLocations();
+//     } catch (err) {
+//       console.error("Error toggling status:", err);
+//     }
+//   };
+
+//   const filteredLocations = locations
+//     .filter((loc) =>
+//       `${loc.city} ${loc?.state?.name || ""}`.toLowerCase().includes(search.toLowerCase())
+//     )
+//     .sort((a, b) => {
+//       const aVal = sortBy === "city" ? a.city : a?.state?.name || "";
+//       const bVal = sortBy === "city" ? b.city : b?.state?.name || "";
+//       return aVal.localeCompare(bVal);
+//     });
+
+//   const activeLocations = filteredLocations.filter((loc) => loc.active);
+//   const inactiveLocations = filteredLocations.filter((loc) => !loc.active);
+
+//   const renderTable = (title, list) => (
+//     <div className="mb-10 bg-white rounded-xl shadow-md p-4">
+//       <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">{title}</h2>
+//       {list.length === 0 ? (
+//         <p className="text-gray-500">No locations found.</p>
+//       ) : (
+//         <table className="w-full table-auto text-sm text-gray-700">
+//           <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+//             <tr>
+//               <th className="p-3 text-left">City</th>
+//               <th className="p-3 text-left">State</th>
+//               <th className="p-3 text-center">Status</th>
+//               <th className="p-3 text-center">Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {list.map((loc, idx) => (
+//               <tr
+//                 key={loc._id}
+//                 className={`${idx % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100 transition`}
+//               >
+//                 <td className="p-3">{loc.city}</td>
+//                 <td className="p-3">{loc?.state?.name || "N/A"}</td>
+//                 <td className="p-3 text-center">
+//                   <button
+//                     onClick={() => handleToggle(loc._id)}
+//                     className={`px-3 py-1 rounded text-white font-medium transition ${loc.active
+//                       ? "bg-green-500 hover:bg-green-600"
+//                       : "bg-gray-400 hover:bg-gray-500"
+//                       }`}
+//                   >
+//                     {loc.active ? "Active" : "Inactive"}
+//                   </button>
+//                 </td>
+//                 <td className="p-3 text-center space-x-2">
+//                   <button
+//                     onClick={() => handleEdit(loc)}
+//                     disabled={!loc.active}
+//                     className={`px-3 py-1 rounded font-medium text-white transition ${loc.active
+//                       ? "bg-yellow-500 hover:bg-yellow-600"
+//                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
+//                       }`}
+//                   >
+//                     Edit
+//                   </button>
+//                   <button
+//                     onClick={() => handleDelete(loc._id)}
+//                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded font-medium transition"
+//                   >
+//                     Delete
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       )}
+//     </div>
+//   );
+
+//   return (
+//     <main className="p-8">
+//       <h1 className="text-4xl font-bold text-gray-800 mb-8">Manage Locations</h1>
+
+//       {/* Form */}
+//       <form
+//         onSubmit={handleSubmit}
+//         className="mb-8 bg-white rounded-xl shadow-md p-6 flex flex-wrap gap-4 items-end"
+//       >
+//         {error && <p className="text-red-500 w-full">{error}</p>}
+//         <input
+//           type="text"
+//           placeholder="City"
+//           value={formData.city}
+//           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+//           required
+//           className="flex-1 border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
+//         />
+//         <select
+//           value={formData.state}
+//           onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+//           required
+//           className="flex-1 border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
+//         >
+//           <option value="">Select State</option>
+//           {states.map((state) => (
+//             <option key={state._id} value={state._id}>
+//               {state.name}
+//             </option>
+//           ))}
+//         </select>
+//         <button
+//           type="submit"
+//           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded transition"
+//         >
+//           {editingId ? "Update" : "Add"}
+//         </button>
+//       </form>
+
+//       {/* Filters */}
+//       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+//         <input
+//           type="text"
+//           placeholder="Search by city or state"
+//           value={search}
+//           onChange={(e) => setSearch(e.target.value)}
+//           className="w-full md:w-1/2 border border-gray-300 rounded px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+//         />
+//         <select
+//           value={sortBy}
+//           onChange={(e) => setSortBy(e.target.value)}
+//           className="border border-gray-300 rounded px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-500"
+//         >
+//           <option value="city">Sort by City</option>
+//           <option value="state">Sort by State</option>
+//         </select>
+//       </div>
+
+//       {/* Tables */}
+//       {renderTable("Active Locations", activeLocations)}
+//       {renderTable("Inactive Locations", inactiveLocations)}
+//     </main>
+//   );
+// };
+
+// export default Location;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import {
   getLocations,
   addLocation,
@@ -589,25 +849,23 @@ const Location = () => {
     } catch (err) {
       console.error("Error loading locations:", err);
       setError("Failed to fetch locations.");
+      Swal.fire("Error", "Failed to fetch locations.", "error");
     }
   };
 
   const loadStates = async () => {
     try {
       const res = await getStates();
-      console.log("Fetched states:", res.data);
-
       const stateList = Array.isArray(res.data)
         ? res.data
         : Array.isArray(res.data.data)
           ? res.data.data
           : [];
-
       setStates(stateList.filter((s) => s.isActive));
     } catch (err) {
       console.error("Error loading states:", err);
-      setError("Failed to fetch states.");
       setStates([]);
+      Swal.fire("Error", "Failed to fetch states.", "error");
     }
   };
 
@@ -615,20 +873,25 @@ const Location = () => {
     e.preventDefault();
     if (!formData.city || !formData.state) {
       setError("Both city and state are required.");
+      Swal.fire("Validation Error", "Both city and state are required.", "warning");
       return;
     }
 
     try {
       if (editingId) {
         await updateLocation(editingId, formData);
+        Swal.fire("Updated!", "Location updated successfully.", "success");
       } else {
         await addLocation(formData);
+        Swal.fire("Added!", "Location added successfully.", "success");
       }
       resetForm();
       loadLocations();
     } catch (err) {
       console.error("Error saving location:", err);
-      setError(err?.response?.data?.error || "Something went wrong.");
+      const msg = err?.response?.data?.error || "Something went wrong.";
+      setError(msg);
+      Swal.fire("Error", msg, "error");
     }
   };
 
@@ -645,12 +908,24 @@ const Location = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this location?")) {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This will permanently delete the location.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#e3342f",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
       try {
         await deleteLocation(id);
+        Swal.fire("Deleted!", "Location has been deleted.", "success");
         loadLocations();
       } catch (err) {
         console.error("Error deleting location:", err);
+        Swal.fire("Error", "Failed to delete location.", "error");
       }
     }
   };
@@ -658,9 +933,11 @@ const Location = () => {
   const handleToggle = async (id) => {
     try {
       await toggleStatus(id);
+      Swal.fire("Success", "Location status updated.", "success");
       loadLocations();
     } catch (err) {
       console.error("Error toggling status:", err);
+      Swal.fire("Error", "Failed to update status.", "error");
     }
   };
 
@@ -703,9 +980,7 @@ const Location = () => {
                 <td className="p-3 text-center">
                   <button
                     onClick={() => handleToggle(loc._id)}
-                    className={`px-3 py-1 rounded text-white font-medium transition ${loc.active
-                      ? "bg-green-500 hover:bg-green-600"
-                      : "bg-gray-400 hover:bg-gray-500"
+                    className={`px-3 py-1 rounded text-white font-medium transition ${loc.active ? "bg-green-500 hover:bg-green-600" : "bg-gray-400 hover:bg-gray-500"
                       }`}
                   >
                     {loc.active ? "Active" : "Inactive"}

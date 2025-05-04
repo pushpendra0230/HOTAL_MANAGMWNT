@@ -1,8 +1,352 @@
+// import React, { useEffect, useState } from "react";
+// import { getStates } from "../../api/stateApi";
+// import { getHotels, addHotel, updateHotel, deleteHotel, toggleHotelStatus } from "../../api/hotelApi";
+
+// const Hotel = () => {
+//     const [searchTerm, setSearchTerm] = useState("");
+//     const [sortBy, setSortBy] = useState("");
+//     const [states, setStates] = useState([]);
+//     const [hotels, setHotels] = useState([]);
+//     const [formData, setFormData] = useState({
+//         name: "",
+//         address: "",
+//         totalRooms: "",
+//         description: "",
+//         contactNumber: "",
+//         email: "",
+//         state: "",
+//         city: "",
+//     });
+//     const [editingId, setEditingId] = useState(null);
+//     const [error, setError] = useState("");
+
+//     useEffect(() => {
+//         fetchStates();
+//         fetchHotels();
+//     }, []);
+
+//     const fetchStates = async () => {
+//         try {
+//             const res = await getStates();
+//             const stateList = Array.isArray(res.data)
+//                 ? res.data
+//                 : Array.isArray(res.data.data)
+//                     ? res.data.data
+//                     : [];
+//             setStates(stateList.filter((s) => s.isActive));
+//         } catch (err) {
+//             console.error("Failed to load states", err);
+//             setStates([]);
+//         }
+//     };
+
+//     const fetchHotels = async () => {
+//         try {
+//             const res = await getHotels();
+//             const hotelList = Array.isArray(res.data)
+//                 ? res.data
+//                 : Array.isArray(res.data.data)
+//                     ? res.data.data
+//                     : res.data.hotels || [];
+//             setHotels(hotelList);
+//         } catch (err) {
+//             console.error("Failed to load hotels", err);
+//         }
+//     };
+
+//     const resetForm = () => {
+//         setFormData({
+//             name: "",
+//             address: "",
+//             totalRooms: "",
+//             description: "",
+//             contactNumber: "",
+//             email: "",
+//             state: "",
+//             city: "",
+//         });
+//         setEditingId(null);
+//         setError("");
+//     };
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         const { name, address, totalRooms, description, contactNumber, email, state, city } = formData;
+
+//         if (!name || !address || !totalRooms || !description || !contactNumber || !email || !state || !city) {
+//             setError("All fields are required.");
+//             return;
+//         }
+
+//         try {
+//             const payload = { ...formData, rooms: totalRooms };
+//             delete payload.totalRooms;
+
+//             if (editingId) {
+//                 await updateHotel(editingId, payload);
+//             } else {
+//                 await addHotel(payload);
+//             }
+
+//             resetForm();
+//             fetchHotels();
+//             console.log("Submitting hotel data:", payload);
+//         } catch (err) {
+//             console.error("Error submitting hotel", err);
+//             setError("Something went wrong while saving hotel.");
+//         }
+//     };
+
+//     const handleEdit = (hotel) => {
+//         setFormData({
+//             name: hotel.name,
+//             address: hotel.address,
+//             totalRooms: hotel.totalRooms,
+//             description: hotel.description,
+//             contactNumber: hotel.contactNumber,
+//             email: hotel.email,
+//             state: hotel.state?._id || hotel.state || "",
+//             city: hotel.city?.city || hotel.city || "",
+//         });
+//         setEditingId(hotel._id);
+//     };
+
+//     const handleDelete = async (id) => {
+//         if (window.confirm("Are you sure you want to delete this hotel?")) {
+//             try {
+//                 await deleteHotel(id);
+//                 fetchHotels();
+//             } catch (err) {
+//                 console.error("Failed to delete hotel", err);
+//             }
+//         }
+//     };
+
+//     const handleToggle = async (id) => {
+//         try {
+//             console.log("Toggling hotel with ID:", id);
+//             await toggleHotelStatus(id);
+//             fetchHotels();
+//         } catch (err) {
+//             console.error("Failed to toggle hotel status", err);
+//         }
+//     };
+
+//     const activeHotels = hotels.filter((h) => h.active);
+//     const inactiveHotels = hotels.filter((h) => !h.active);
+
+//     const getFilteredSortedHotels = (isActive) => {
+//         return hotels
+//             .filter((hotel) => hotel.active === isActive)
+//             .filter((hotel) =>
+//                 hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//                 (hotel.city?.city || hotel.city || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+//                 (hotel.state?.name || "").toLowerCase().includes(searchTerm.toLowerCase())
+//             )
+//             .sort((a, b) => {
+//                 if (!sortBy) return 0;
+//                 if (sortBy === "name") return a.name.localeCompare(b.name);
+//                 if (sortBy === "city") return (a.city?.city || a.city || "").localeCompare(b.city?.city || b.city || "");
+//                 if (sortBy === "state") return (a.state?.name || "").localeCompare(b.state?.name || "");
+//                 return 0;
+//             });
+//     };
+
+//     const renderTable = (title, list) => (
+//         <div className="mb-10 bg-white rounded-xl shadow-md p-4">
+//             <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">{title}</h2>
+//             {list.length === 0 ? (
+//                 <p className="text-gray-500">No hotels found.</p>
+//             ) : (
+//                 <table className="w-full table-auto text-sm text-gray-700">
+//                     <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+//                         <tr>
+//                             <th className="p-3 text-left">Hotel</th>
+//                             <th className="p-3 text-left">State</th>
+//                             <th className="p-3 text-left">City</th>
+//                             <th className="p-3 text-left">Contact</th>
+//                             <th className="p-3 text-center">Status</th>
+//                             <th className="p-3 text-center">Actions</th>
+//                         </tr>
+//                     </thead>
+//                     <tbody>
+//                         {list.map((hotel) => (
+//                             <tr key={hotel._id} className="even:bg-gray-50 hover:bg-gray-100 transition">
+//                                 <td className="p-3">{hotel.name}</td>
+//                                 <td className="p-3">{hotel.state?.name || "—"}</td>
+//                                 <td className="p-3">{hotel.city?.city || hotel.city || "—"}</td>
+//                                 <td className="p-3">{hotel.contactNumber}</td>
+//                                 <td className="p-3 text-center">
+//                                     <button
+//                                         onClick={() => handleToggle(hotel._id)}
+//                                         className={`px-3 py-1 rounded text-white font-medium transition ${hotel.active
+//                                             ? "bg-green-500 hover:bg-green-600"
+//                                             : "bg-gray-400 hover:bg-gray-500"
+//                                             }`}
+//                                     >
+//                                         {hotel.active ? "Active" : "Inactive"}
+//                                     </button>
+//                                 </td>
+//                                 <td className="p-3 text-center space-x-2">
+//                                     <button
+//                                         onClick={() => handleEdit(hotel)}
+//                                         className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+//                                     >
+//                                         Edit
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleDelete(hotel._id)}
+//                                         className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+//                                     >
+//                                         Delete
+//                                     </button>
+//                                 </td>
+//                             </tr>
+//                         ))}
+//                     </tbody>
+//                 </table>
+//             )}
+//         </div>
+//     );
+
+//     return (
+//         <main className="p-8">
+//             <h1 className="text-3xl font-bold text-gray-800 mb-6">Manage Hotels</h1>
+
+//             {/* Search and Sort */}
+//             <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
+//                 <input
+//                     type="text"
+//                     placeholder="Search by name, city, or state..."
+//                     value={searchTerm}
+//                     onChange={(e) => setSearchTerm(e.target.value)}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 />
+//                 <select
+//                     value={sortBy}
+//                     onChange={(e) => setSortBy(e.target.value)}
+//                     className="border px-4 py-2 rounded"
+//                 >
+//                     <option value="">Sort By</option>
+//                     <option value="name">Hotel Name</option>
+//                     <option value="city">City</option>
+//                     <option value="state">State</option>
+//                 </select>
+//             </div>
+
+//             <form
+//                 onSubmit={handleSubmit}
+//                 className="mb-10 bg-white rounded-xl shadow-md p-6 flex flex-wrap gap-4"
+//             >
+//                 {error && <p className="text-red-500 w-full">{error}</p>}
+
+//                 <input
+//                     type="text"
+//                     placeholder="Hotel Name"
+//                     value={formData.name}
+//                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 />
+//                 <input
+//                     type="text"
+//                     placeholder="Address"
+//                     value={formData.address}
+//                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 />
+//                 <input
+//                     type="number"
+//                     placeholder="Total Rooms"
+//                     value={formData.totalRooms}
+//                     onChange={(e) => setFormData({ ...formData, totalRooms: e.target.value })}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 />
+//                 <input
+//                     type="text"
+//                     placeholder="Contact Number"
+//                     value={formData.contactNumber}
+//                     onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 />
+//                 <input
+//                     type="email"
+//                     placeholder="Email"
+//                     value={formData.email}
+//                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 />
+//                 <textarea
+//                     placeholder="Description"
+//                     value={formData.description}
+//                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+//                     className="w-full border px-4 py-2 rounded"
+//                 />
+
+//                 <select
+//                     value={formData.state}
+//                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 >
+//                     <option value="">Select State</option>
+//                     {states.map((state) => (
+//                         <option key={state._id} value={state._id}>
+//                             {state.name}
+//                         </option>
+//                     ))}
+//                 </select>
+
+//                 <input
+//                     type="text"
+//                     placeholder="City Name"
+//                     value={formData.city}
+//                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+//                     className="flex-1 border px-4 py-2 rounded"
+//                 />
+
+//                 <button
+//                     type="submit"
+//                     className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+//                 >
+//                     {editingId ? "Update Hotel" : "Add Hotel"}
+//                 </button>
+//             </form>
+
+//             {renderTable("Active Hotels", getFilteredSortedHotels(true))}
+//             {renderTable("Inactive Hotels", getFilteredSortedHotels(false))}
+//         </main>
+//     );
+// };
+
+// export default Hotel;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { getStates } from "../../api/stateApi";
-import { getHotels, addHotel, updateHotel, deleteHotel, toggleHotelStatus } from "../../api/hotelApi";
+import {
+    getHotels,
+    addHotel,
+    updateHotel,
+    deleteHotel,
+    toggleHotelStatus,
+} from "../../api/hotelApi";
 
 const Hotel = () => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("");
     const [states, setStates] = useState([]);
     const [hotels, setHotels] = useState([]);
     const [formData, setFormData] = useState({
@@ -69,9 +413,27 @@ const Hotel = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { name, address, totalRooms, description, contactNumber, email, state, city } = formData;
+        const {
+            name,
+            address,
+            totalRooms,
+            description,
+            contactNumber,
+            email,
+            state,
+            city,
+        } = formData;
 
-        if (!name || !address || !totalRooms || !description || !contactNumber || !email || !state || !city) {
+        if (
+            !name ||
+            !address ||
+            !totalRooms ||
+            !description ||
+            !contactNumber ||
+            !email ||
+            !state ||
+            !city
+        ) {
             setError("All fields are required.");
             return;
         }
@@ -82,16 +444,17 @@ const Hotel = () => {
 
             if (editingId) {
                 await updateHotel(editingId, payload);
+                Swal.fire("Updated!", "Hotel updated successfully.", "success");
             } else {
                 await addHotel(payload);
+                Swal.fire("Added!", "Hotel added successfully.", "success");
             }
 
             resetForm();
             fetchHotels();
-            console.log("Submitting hotel data:", payload);
         } catch (err) {
             console.error("Error submitting hotel", err);
-            setError("Something went wrong while saving hotel.");
+            Swal.fire("Error!", "Failed to save hotel. Please try again.", "error");
         }
     };
 
@@ -110,28 +473,59 @@ const Hotel = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this hotel?")) {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+        });
+
+        if (result.isConfirmed) {
             try {
                 await deleteHotel(id);
                 fetchHotels();
+                Swal.fire("Deleted!", "Hotel has been deleted.", "success");
             } catch (err) {
                 console.error("Failed to delete hotel", err);
+                Swal.fire("Error!", "Failed to delete hotel.", "error");
             }
         }
     };
 
     const handleToggle = async (id) => {
         try {
-            console.log("Toggling hotel with ID:", id);
             await toggleHotelStatus(id);
             fetchHotels();
+            Swal.fire("Success", "Hotel status changed.", "success");
         } catch (err) {
             console.error("Failed to toggle hotel status", err);
+            Swal.fire("Error!", "Failed to change hotel status.", "error");
         }
     };
 
-    const activeHotels = hotels.filter((h) => h.active);
-    const inactiveHotels = hotels.filter((h) => !h.active);
+    const getFilteredSortedHotels = (isActive) => {
+        return hotels
+            .filter((hotel) => hotel.active === isActive)
+            .filter((hotel) =>
+                hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (hotel.city?.city || hotel.city || "")
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()) ||
+                (hotel.state?.name || "").toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .sort((a, b) => {
+                if (!sortBy) return 0;
+                if (sortBy === "name") return a.name.localeCompare(b.name);
+                if (sortBy === "city")
+                    return (a.city?.city || a.city || "").localeCompare(
+                        b.city?.city || b.city || ""
+                    );
+                if (sortBy === "state")
+                    return (a.state?.name || "").localeCompare(b.state?.name || "");
+                return 0;
+            });
+    };
 
     const renderTable = (title, list) => (
         <div className="mb-10 bg-white rounded-xl shadow-md p-4">
@@ -194,6 +588,28 @@ const Hotel = () => {
         <main className="p-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Manage Hotels</h1>
 
+            {/* Search and Sort */}
+            <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
+                <input
+                    type="text"
+                    placeholder="Search by name, city, or state..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="flex-1 border px-4 py-2 rounded"
+                />
+                <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="border px-4 py-2 rounded"
+                >
+                    <option value="">Sort By</option>
+                    <option value="name">Hotel Name</option>
+                    <option value="city">City</option>
+                    <option value="state">State</option>
+                </select>
+            </div>
+
+            {/* Form */}
             <form
                 onSubmit={handleSubmit}
                 className="mb-10 bg-white rounded-xl shadow-md p-6 flex flex-wrap gap-4"
@@ -241,7 +657,6 @@ const Hotel = () => {
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="w-full border px-4 py-2 rounded"
                 />
-
                 <select
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
@@ -254,7 +669,6 @@ const Hotel = () => {
                         </option>
                     ))}
                 </select>
-
                 <input
                     type="text"
                     placeholder="City Name"
@@ -262,7 +676,6 @@ const Hotel = () => {
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="flex-1 border px-4 py-2 rounded"
                 />
-
                 <button
                     type="submit"
                     className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
@@ -271,8 +684,8 @@ const Hotel = () => {
                 </button>
             </form>
 
-            {renderTable("Active Hotels", activeHotels)}
-            {renderTable("Inactive Hotels", inactiveHotels)}
+            {renderTable("Active Hotels", getFilteredSortedHotels(true))}
+            {renderTable("Inactive Hotels", getFilteredSortedHotels(false))}
         </main>
     );
 };
