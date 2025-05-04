@@ -1,244 +1,4 @@
 // import React, { useEffect, useState } from "react";
-// import {
-//     getStates
-// } from "../../api/stateApi";
-// import {
-//     getHotels
-// } from "../../api/hotelApi";
-// import {
-//     getRooms,
-//     addRoom,
-//     updateRoom,
-//     toggleRoomStatus,
-//     deleteRoom
-// } from "../../api/roomApi";
-
-// const Room = () => {
-//     const [states, setStates] = useState([]);
-//     const [hotels, setHotels] = useState([]);
-//     const [rooms, setRooms] = useState([]);
-//     const [editingId, setEditingId] = useState(null);
-
-//     const roomTypes = ["Normal Bed", "Medium Bed", "King Size Bed"];
-//     const [formData, setFormData] = useState({
-//         state: "",
-//         city: "",
-//         hotel: "",
-//         type: "",
-//         ac: false,
-//     });
-
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             try {
-//                 const stateRes = await getStates();
-//                 const hotelRes = await getHotels();
-//                 const roomRes = await getRooms();
-
-//                 console.log("States:", stateRes?.data?.data);
-//                 console.log("Hotels (raw):", hotelRes?.data);
-//                 console.log("Rooms:", roomRes?.data);
-
-//                 const activeStates = stateRes?.data?.data?.filter((s) => s.isActive);
-//                 const activeHotels = hotelRes?.data?.filter((h) => h.isActive);
-
-//                 console.log("Filtered Active States:", activeStates);
-//                 console.log("Filtered Active Hotels:", activeHotels);
-
-//                 setStates(activeStates);
-//                 setHotels(activeHotels);
-//                 setRooms(roomRes?.data);
-//             } catch (err) {
-//                 console.error("Fetch error:", err);
-//                 toast.error("Failed to load data");
-//             }
-//         };
-
-//         fetchData();
-//     }, []);
-
-//     const handleChange = (e) => {
-//         const { name, value, type, checked } = e.target;
-//         setFormData({
-//             ...formData,
-//             [name]: type === "checkbox" ? checked : value,
-//         });
-//     };
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         try {
-//             if (editingId) {
-//                 await updateRoom(editingId, formData);
-//                 toast.success("Room updated");
-//             } else {
-//                 await addRoom(formData);
-//                 toast.success("Room added");
-//             }
-//             const roomRes = await getRooms();
-//             setRooms(roomRes.data);
-//             setFormData({ state: "", city: "", hotel: "", type: "", ac: false });
-//             setEditingId(null);
-//         } catch (err) {
-//             console.error(err);
-//             toast.error("Something went wrong");
-//         }
-//     };
-
-//     const handleEdit = (room) => {
-//         setEditingId(room._id);
-//         setFormData({
-//             state: room.state || "",
-//             city: room.city || "",
-//             hotel: room.hotel?._id || "",
-//             type: room.type,
-//             ac: room.isAc,
-//         });
-//     };
-
-//     const handleToggle = async (id) => {
-//         try {
-//             await toggleRoomStatus(id);
-//             const roomRes = await getRooms();
-//             setRooms(roomRes.data);
-//         } catch (err) {
-//             toast.error("Toggle failed");
-//         }
-//     };
-
-//     const handleDelete = async (id) => {
-//         try {
-//             await deleteRoom(id);
-//             setRooms((prev) => prev.filter((r) => r._id !== id));
-//         } catch (err) {
-//             toast.error("Delete failed");
-//         }
-//     };
-
-//     return (
-//         <div className="max-w-5xl mx-auto">
-//             <h2 className="text-2xl font-bold mb-6">🛏️ Room Management</h2>
-
-//             <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
-//                 <div className="grid grid-cols-2 gap-4">
-//                     {/* State Dropdown */}
-//                     <select
-//                         name="state"
-//                         value={formData.state}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     >
-//                         <option value="">Select State</option>
-//                         {states.map((s) => (
-//                             <option key={s._id} value={s._id}>
-//                                 {s.name}
-//                             </option>
-//                         ))}
-//                     </select>
-
-//                     {/* Manual City Input */}
-//                     <input
-//                         type="text"
-//                         name="city"
-//                         placeholder="Enter City"
-//                         value={formData.city}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     />
-
-//                     {/* Hotel Dropdown */}
-//                     <select
-//                         name="hotel"
-//                         value={formData.hotel}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     >
-//                         <option value="">Select Hotel</option>
-//                         {hotels.map((h) => (
-//                             <option key={h._id} value={h._id}>
-//                                 {h.name}
-//                             </option>
-//                         ))}
-//                     </select>
-
-//                     {/* Room Type Dropdown */}
-//                     <select
-//                         name="type"
-//                         value={formData.type}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     >
-//                         <option value="">Select Room Type</option>
-//                         {roomTypes.map((t, i) => (
-//                             <option key={i} value={t}>
-//                                 {t}
-//                             </option>
-//                         ))}
-//                     </select>
-
-//                     {/* AC Checkbox */}
-//                     <label className="flex items-center space-x-2 col-span-2">
-//                         <input
-//                             type="checkbox"
-//                             name="ac"
-//                             checked={formData.ac}
-//                             onChange={handleChange}
-//                         />
-//                         <span>AC Room</span>
-//                     </label>
-//                 </div>
-
-//                 <button
-//                     type="submit"
-//                     className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-//                 >
-//                     {editingId ? "Update Room" : "Add Room"}
-//                 </button>
-//             </form>
-
-//             {/* Room List */}
-//             <div className="mt-10">
-//                 <h3 className="text-xl font-semibold mb-4">Room List</h3>
-//                 <div className="grid gap-4">
-//                     {rooms.map((room) => (
-//                         <div
-//                             key={room._id}
-//                             className="bg-white p-4 rounded shadow flex justify-between items-center"
-//                         >
-//                             <div>
-//                                 <p><strong>{room.type}</strong> – {room.isAc ? "AC" : "Non-AC"}</p>
-//                                 <p>{room.hotel?.name}, {room.city}</p>
-//                             </div>
-//                             <div className="space-x-2">
-//                                 <button onClick={() => handleEdit(room)} className="text-blue-600">Edit</button>
-//                                 <button onClick={() => handleToggle(room._id)} className="text-yellow-600">
-//                                     {room.active ? "Deactivate" : "Activate"}
-//                                 </button>
-//                                 <button onClick={() => handleDelete(room._id)} className="text-red-600">Delete</button>
-//                             </div>
-//                         </div>
-//                     ))}
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Room;
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from "react";
 // import { getStates } from "../../api/stateApi";
 // import { getHotels } from "../../api/hotelApi";
 // import {
@@ -262,7 +22,7 @@
 //         city: "",
 //         hotel: "",
 //         type: "",
-//         ac: false,
+//         isAc: false,
 //     });
 
 //     useEffect(() => {
@@ -307,7 +67,6 @@
 //             let newRoom;
 
 //             if (editingId) {
-//                 // Update existing room
 //                 const updatedRoom = await updateRoom(editingId, formData);
 //                 newRoom = updatedRoom.data;
 //             } else {
@@ -317,7 +76,7 @@
 
 //             setRooms((prevRooms) => [...prevRooms, newRoom]);
 
-//             setFormData({ state: "", city: "", hotel: "", type: "", ac: false });
+//             setFormData({ state: "", city: "", hotel: "", type: "", isAc: false });
 //             setEditingId(null);
 
 //         } catch (err) {
@@ -365,104 +124,184 @@
 //         : [];
 
 //     return (
-//         <div className="max-w-5xl mx-auto">
-//             <h2 className="text-2xl font-bold mb-6">🛏️ Room Management</h2>
+//         <div className="max-w-5xl mx-auto bg-gray-50 p-8 rounded-xl shadow-xl">
+//             <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">🛏️ Room Management</h2>
 
-//             <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
-//                 <div className="grid grid-cols-2 gap-4">
-//                     {/* State Dropdown */}
-//                     <select
-//                         name="state"
-//                         value={formData.state}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     >
-//                         <option value="">Select State</option>
-//                         {states.map((s) => (
-//                             <option key={s._id} value={s._id.toString()}>
-//                                 {s.name}
-//                             </option>
-//                         ))}
-//                     </select>
-
-//                     <input
-//                         type="text"
-//                         name="city"
-//                         placeholder="Enter City"
-//                         value={formData.city}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     />
-
-//                     <select
-//                         name="hotel"
-//                         value={formData.hotel}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     >
-//                         <option value="">Select Hotel</option>
-//                         {filteredHotels.map((h) => (
-//                             <option key={h._id} value={h._id}>
-//                                 {h.name}
-//                             </option>
-//                         ))}
-//                     </select>
-
-//                     <select
-//                         name="type"
-//                         value={formData.type}
-//                         onChange={handleChange}
-//                         required
-//                         className="border px-2 py-1 rounded"
-//                     >
-//                         <option value="">Select Room Type</option>
-//                         {roomTypes.map((t, i) => (
-//                             <option key={i} value={t}>
-//                                 {t}
-//                             </option>
-//                         ))}
-//                     </select>
-
-//                     <label className="flex items-center space-x-2 col-span-2">
-//                         <input
-//                             type="checkbox"
-//                             name="ac"
-//                             checked={formData.ac}
+//             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-lg">
+//                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+//                     <div>
+//                         <label htmlFor="state" className="block text-sm font-medium text-gray-700">State</label>
+//                         <select
+//                             name="state"
+//                             id="state"
+//                             value={formData.state}
 //                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+//                         >
+//                             <option value="">Select State</option>
+//                             {states.map((s) => (
+//                                 <option key={s._id} value={s._id.toString()}>
+//                                     {s.name}
+//                                 </option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     <div>
+//                         <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
+//                         <input
+//                             type="text"
+//                             name="city"
+//                             id="city"
+//                             placeholder="Enter City"
+//                             value={formData.city}
+//                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
 //                         />
-//                         <span>AC Room</span>
-//                     </label>
+//                     </div>
+
+//                     <div>
+//                         <label htmlFor="hotel" className="block text-sm font-medium text-gray-700">Hotel</label>
+//                         <select
+//                             name="hotel"
+//                             id="hotel"
+//                             value={formData.hotel}
+//                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+//                         >
+//                             <option value="">Select Hotel</option>
+//                             {filteredHotels.map((h) => (
+//                                 <option key={h._id} value={h._id}>
+//                                     {h.name}
+//                                 </option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     <div>
+//                         <label htmlFor="type" className="block text-sm font-medium text-gray-700">Room Type</label>
+//                         <select
+//                             name="type"
+//                             id="type"
+//                             value={formData.type}
+//                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+//                         >
+//                             <option value="">Select Room Type</option>
+//                             {roomTypes.map((t, i) => (
+//                                 <option key={i} value={t}>
+//                                     {t}
+//                                 </option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     <div className="col-span-2">
+//                         <label className="flex items-center space-x-3 text-sm font-medium text-gray-700">
+//                             <input
+//                                 type="checkbox"
+//                                 name="isAc"
+//                                 checked={formData.isAc}
+//                                 onChange={handleChange}
+//                                 className="h-5 w-5 text-indigo-500 focus:ring-indigo-500 border-gray-300 rounded"
+//                             />
+//                             <span>AC Room</span>
+//                         </label>
+//                     </div>
 //                 </div>
 
 //                 <button
 //                     type="submit"
-//                     className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+//                     className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
 //                 >
 //                     {editingId ? "Update Room" : "Add Room"}
 //                 </button>
 //             </form>
 
 //             <div className="mt-10">
-//                 <h3 className="text-xl font-semibold mb-4">Room List</h3>
-//                 <div className="grid gap-4">
-//                     {rooms.map((room) => (
+//                 <h3 className="text-2xl font-semibold text-gray-800 mb-6">Active Rooms</h3>
+//                 <div className="space-y-6">
+//                     {rooms.filter((room) => room.active).map((room) => (
 //                         <div
 //                             key={room._id}
-//                             className="bg-white p-4 rounded shadow flex justify-between items-center"
+//                             className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200"
 //                         >
-//                             <div>
-//                                 <p><strong>{room.type}</strong> – {room.isAc ? "AC" : "Non-AC"}</p>
-//                                 <p>{room.hotel?.name}, {room.city}</p>
+//                             <div className="flex justify-between items-center">
+//                                 <div>
+//                                     <p className="text-lg font-semibold text-gray-800">{room.type} – {room.isAc ? "AC" : "Non-AC"}</p>
+//                                     <p className="text-sm text-gray-600">{room.hotel?.name}, {room.city}</p>
+//                                 </div>
+//                                 <div className="space-x-4">
+//                                     <button
+//                                         onClick={() => handleEdit(room)}
+//                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150"
+//                                     >
+//                                         Edit
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleToggle(room._id)}
+//                                         className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition duration-150"
+//                                     >
+//                                         Deactivate
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleDelete(room._id)}
+//                                         className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150"
+//                                     >
+//                                         Delete
+//                                     </button>
+//                                 </div>
 //                             </div>
-//                             <div className="space-x-2">
-//                                 <button onClick={() => handleEdit(room)} className="text-blue-600">Edit</button>
-//                                 <button onClick={() => handleToggle(room._id)} className="text-yellow-600">
-//                                     {room.active ? "Deactivate" : "Activate"}
-//                                 </button>
-//                                 <button onClick={() => handleDelete(room._id)} className="text-red-600">Delete</button>
+//                         </div>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             <div className="mt-10">
+//                 <h3 className="text-2xl font-semibold text-gray-800 mb-6">Deactivated Rooms</h3>
+//                 <div className="space-y-6">
+//                     {rooms.filter((room) => !room.active).map((room) => (
+//                         <div
+//                             key={room._id}
+//                             className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200"
+//                         >
+//                             <div className="flex justify-between items-center">
+//                                 <div>
+//                                     <p className="text-lg font-semibold text-gray-800">{room.type} – {room.isAc ? "AC" : "Non-AC"}</p>
+//                                     <p className="text-sm text-gray-600">{room.hotel?.name}, {room.city}</p>
+//                                 </div>
+//                                 <div className="space-x-4">
+//                                     <button
+//                                         onClick={() => {
+//                                             if (room.active) {
+//                                                 handleEdit(room);
+//                                             }
+//                                         }}
+//                                         disabled={!room.active}
+//                                         className={`px-4 py-2 rounded-md transition duration-150 ${room.active
+//                                             ? "bg-blue-600 text-white hover:bg-blue-700"
+//                                             : "bg-gray-400 text-white cursor-not-allowed"
+//                                             }`}
+//                                     >
+//                                         Edit
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleToggle(room._id)}
+//                                         className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition duration-150"
+//                                     >
+//                                         Activate
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleDelete(room._id)}
+//                                         className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150"
+//                                     >
+//                                         Delete
+//                                     </button>
+//                                 </div>
 //                             </div>
 //                         </div>
 //                     ))}
@@ -483,6 +322,415 @@
 
 
 
+
+
+
+// import React, { useEffect, useState } from "react";
+// import { getStates } from "../../api/stateApi";
+// import { getHotels } from "../../api/hotelApi";
+// import {
+//     getRooms,
+//     addRoom,
+//     updateRoom,
+//     toggleRoomStatus,
+//     deleteRoom,
+// } from "../../api/roomApi";
+// import { uploadImageToCloudinary } from "../../api/cloudinaryApi";
+
+// const Room = () => {
+//     const [states, setStates] = useState([]);
+//     const [hotels, setHotels] = useState([]);
+//     const [rooms, setRooms] = useState([]);
+//     const [editingId, setEditingId] = useState(null);
+//     const [imagePreview, setImagePreview] = useState(null);
+//     const [fileInputKey, setFileInputKey] = useState(Date.now());
+
+//     const roomTypes = ["Normal Bed", "Medium Bed", "King Size Bed"];
+
+//     const [formData, setFormData] = useState({
+//         state: "",
+//         city: "",
+//         hotel: "",
+//         type: "",
+//         isAc: false,
+//         images: [],
+//     });
+
+//     useEffect(() => {
+//         const fetchData = async () => {
+//             try {
+//                 const stateRes = await getStates();
+//                 const hotelRes = await getHotels();
+//                 const roomRes = await getRooms();
+
+//                 const activeStates = stateRes?.data?.data?.filter((s) => s.isActive);
+//                 const activeHotels = hotelRes?.data?.filter((h) => h.active === true);
+
+//                 setStates(activeStates);
+//                 setHotels(activeHotels);
+//                 setRooms(roomRes?.data);
+//             } catch (err) {
+//                 console.error("Fetch error:", err);
+//             }
+//         };
+
+//         fetchData();
+//     }, []);
+
+//     const handleChange = (e) => {
+//         const { name, value, type, checked } = e.target;
+//         setFormData({
+//             ...formData,
+//             [name]: type === "checkbox" ? checked : value,
+//         });
+//     };
+
+//     const handleImageChange = async (e) => {
+//         const files = e.target.files;
+//         if (!files || files.length === 0) return;
+
+//         const uploadedUrls = [];
+
+//         for (const file of files) {
+//             const formDataToSend = new FormData();
+//             formDataToSend.append("file", file);
+//             formDataToSend.append("upload_preset", "pushpa");
+
+//             try {
+//                 const response = await uploadImageToCloudinary(formDataToSend);
+//                 console.log("Cloudinary response:", response);
+
+//                 if (response && response.secure_url) {
+//                     uploadedUrls.push(response.secure_url);
+//                 } else {
+//                     console.error("Cloudinary response does not contain secure_url");
+//                 }
+//             } catch (error) {
+//                 console.error("Upload failed:", error);
+//             }
+//         }
+
+//         setFormData((prev) => ({
+//             ...prev,
+//             images: [...prev.images, ...uploadedUrls],
+//         }));
+
+//         if (uploadedUrls.length > 0) {
+//             setImagePreview(uploadedUrls[0]);
+//         }
+
+//         console.log("Updated form data with images:", formData);
+//     };
+
+
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         console.log("Form submission started", formData);
+
+//         try {
+//             let newRoom;
+//             if (editingId) {
+//                 console.log("Updating existing room with ID:", editingId);
+//                 const updatedRoom = await updateRoom(editingId, formData);
+//                 newRoom = updatedRoom.data;
+//             } else {
+//                 console.log("Adding new room...");
+//                 const addedRoomResponse = await addRoom(formData);
+//                 newRoom = addedRoomResponse.data;
+//             }
+
+//             console.log("Room response after submission:", newRoom);
+
+//             const roomRes = await getRooms();
+//             setRooms(roomRes.data);
+
+//             setFormData({
+//                 state: "",
+//                 city: "",
+//                 hotel: "",
+//                 type: "",
+//                 isAc: false,
+//                 images: [],
+//             });
+//             setImagePreview(null);
+//             setFileInputKey(Date.now());
+//             setEditingId(null);
+
+//             console.log("Form reset after successful submission");
+//         } catch (err) {
+//             console.error("Room submission failed:", err);
+//         }
+//     };
+
+//     const handleEdit = (room) => {
+//         console.log("Editing room:", room);
+//         setEditingId(room._id);
+//         setFormData({
+//             state: room.state?._id?.toString() || "",
+//             city: room.city || "",
+//             hotel: room.hotel?._id || "",
+//             type: room.type,
+//             isAc: room.isAc,
+//             images: room.images || [],
+//         });
+
+//         setImagePreview(room.images?.[0] || null);
+//         console.log("Form data after editing:", room);
+//     };
+
+//     const handleToggle = async (id) => {
+//         try {
+//             console.log("Toggling room status for room ID:", id);
+//             await toggleRoomStatus(id);
+//             const roomRes = await getRooms();
+//             setRooms(roomRes.data);
+//             console.log("Rooms after status toggle:", roomRes.data);
+//         } catch (err) {
+//             console.error("Toggle failed", err);
+//         }
+//     };
+
+//     const handleDelete = async (id) => {
+//         try {
+//             console.log("Deleting room with ID:", id);
+//             await deleteRoom(id);
+//             setRooms((prev) => {
+//                 const updatedRooms = prev.filter((r) => r._id !== id);
+//                 console.log("Updated room list after deletion:", updatedRooms);
+//                 return updatedRooms;
+//             });
+//         } catch (err) {
+//             console.error("Delete failed", err);
+//         }
+//     };
+
+//     const filteredHotels = formData.state
+//         ? hotels.filter((h) => {
+//             const hotelStateId = typeof h.state === "object" ? h.state._id : h.state;
+//             const isHotelActive = h.isActive === true || h.active === true;
+//             return hotelStateId?.toString() === formData.state?.toString() && isHotelActive;
+//         })
+//         : [];
+
+//     return (
+//         <div className="max-w-5xl mx-auto bg-gray-50 p-8 rounded-xl shadow-xl">
+//             <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">🛏️ Room Management</h2>
+
+//             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-lg">
+//                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+//                     {/* State */}
+//                     <div>
+//                         <label htmlFor="state" className="block text-sm font-medium text-gray-700">State</label>
+//                         <select
+//                             name="state"
+//                             id="state"
+//                             value={formData.state}
+//                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
+//                         >
+//                             <option value="">Select State</option>
+//                             {states.map((s) => (
+//                                 <option key={s._id} value={s._id}>{s.name}</option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     {/* City */}
+//                     <div>
+//                         <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
+//                         <input
+//                             type="text"
+//                             name="city"
+//                             id="city"
+//                             value={formData.city}
+//                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
+//                         />
+//                     </div>
+
+//                     {/* Hotel */}
+//                     <div>
+//                         <label htmlFor="hotel" className="block text-sm font-medium text-gray-700">Hotel</label>
+//                         <select
+//                             name="hotel"
+//                             id="hotel"
+//                             value={formData.hotel}
+//                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
+//                         >
+//                             <option value="">Select Hotel</option>
+//                             {filteredHotels.map((h) => (
+//                                 <option key={h._id} value={h._id}>{h.name}</option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     {/* Room Type */}
+//                     <div>
+//                         <label htmlFor="type" className="block text-sm font-medium text-gray-700">Room Type</label>
+//                         <select
+//                             name="type"
+//                             id="type"
+//                             value={formData.type}
+//                             onChange={handleChange}
+//                             required
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
+//                         >
+//                             <option value="">Select Room Type</option>
+//                             {roomTypes.map((t, i) => (
+//                                 <option key={i} value={t}>{t}</option>
+//                             ))}
+//                         </select>
+//                     </div>
+
+//                     {/* AC Checkbox */}
+//                     <div className="col-span-2">
+//                         <label className="flex items-center space-x-3 text-sm font-medium text-gray-700">
+//                             <input
+//                                 type="checkbox"
+//                                 name="isAc"
+//                                 checked={formData.isAc}
+//                                 onChange={handleChange}
+//                                 className="h-5 w-5 text-indigo-500"
+//                             />
+//                             <span>AC Room</span>
+//                         </label>
+//                     </div>
+
+//                     {/* Images */}
+//                     <div>
+//                         <label htmlFor="images" className="block text-sm font-medium text-gray-700">Room Images</label>
+//                         <input
+//                             type="file"
+//                             name="images"
+//                             id="images"
+//                             key={fileInputKey} // To reset file input
+//                             onChange={handleImageChange}
+//                             multiple
+//                             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
+//                         />
+//                         {imagePreview && (
+//                             <div className="mt-4">
+//                                 <img src={imagePreview} alt="Preview" className="w-full h-auto rounded" />
+//                             </div>
+//                         )}
+//                     </div>
+
+//                     {/* Submit Button */}
+//                     <div className="col-span-2">
+//                         <button
+//                             type="submit"
+//                             className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700"
+//                         >
+//                             {editingId ? "Update Room" : "Add Room"}
+//                         </button>
+//                     </div>
+//                 </div>
+//             </form>
+
+//             {/* Render Active Rooms */}
+//             <div className="mt-10">
+//                 <h3 className="text-2xl font-semibold text-gray-800 mb-6">Active Rooms</h3>
+//                 <div className="space-y-6">
+//                     {rooms.filter((room) => room.active).map((room) => (
+//                         <div
+//                             key={room._id}
+//                             className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200"
+//                         >
+//                             <div className="flex justify-between items-center">
+//                                 <div>
+//                                     <p className="text-lg font-semibold text-gray-800">{room.type} – {room.isAc ? "AC" : "Non-AC"}</p>
+//                                     <p className="text-sm text-gray-600">{room.hotel?.name}, {room.city}</p>
+//                                 </div>
+//                                 <div className="space-x-4">
+//                                     <button
+//                                         onClick={() => handleEdit(room)}
+//                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150"
+//                                     >
+//                                         Edit
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleToggle(room._id)}
+//                                         className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition duration-150"
+//                                     >
+//                                         Deactivate
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleDelete(room._id)}
+//                                         className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150"
+//                                     >
+//                                         Delete
+//                                     </button>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             <div className="mt-10">
+//                 <h3 className="text-2xl font-semibold text-gray-800 mb-6">Deactivated Rooms</h3>
+//                 <div className="space-y-6">
+//                     {rooms.filter((room) => !room.active).map((room) => (
+//                         <div
+//                             key={room._id}
+//                             className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200"
+//                         >
+//                             <div className="flex justify-between items-center">
+//                                 <div>
+//                                     <p className="text-lg font-semibold text-gray-800">{room.type} – {room.isAc ? "AC" : "Non-AC"}</p>
+//                                     <p className="text-sm text-gray-600">{room.hotel?.name}, {room.city}</p>
+//                                 </div>
+//                                 <div className="space-x-4">
+//                                     <button
+//                                         onClick={() => handleEdit(room)}
+//                                         className={`px-4 py-2 rounded-md transition duration-150 ${room.active
+//                                             ? "bg-blue-600 text-white hover:bg-blue-700"
+//                                             : "bg-gray-400 text-white cursor-not-allowed"
+//                                             }`}
+//                                     >
+//                                         Edit
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleToggle(room._id)}
+//                                         className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition duration-150"
+//                                     >
+//                                         Activate
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleDelete(room._id)}
+//                                         className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150"
+//                                     >
+//                                         Delete
+//                                     </button>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     ))}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default Room;
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import { getStates } from "../../api/stateApi";
 import { getHotels } from "../../api/hotelApi";
@@ -493,12 +741,15 @@ import {
     toggleRoomStatus,
     deleteRoom,
 } from "../../api/roomApi";
+import { uploadImageToCloudinary } from "../../api/cloudinaryApi";
 
 const Room = () => {
     const [states, setStates] = useState([]);
     const [hotels, setHotels] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [editingId, setEditingId] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [fileInputKey, setFileInputKey] = useState(Date.now());
 
     const roomTypes = ["Normal Bed", "Medium Bed", "King Size Bed"];
 
@@ -508,6 +759,7 @@ const Room = () => {
         hotel: "",
         type: "",
         isAc: false,
+        images: [],
     });
 
     useEffect(() => {
@@ -517,15 +769,8 @@ const Room = () => {
                 const hotelRes = await getHotels();
                 const roomRes = await getRooms();
 
-                console.log("States:", stateRes?.data?.data);
-                console.log("Hotels (raw):", hotelRes?.data);
-                console.log("Rooms:", roomRes?.data);
-
                 const activeStates = stateRes?.data?.data?.filter((s) => s.isActive);
                 const activeHotels = hotelRes?.data?.filter((h) => h.active === true);
-
-                console.log("Filtered Active States:", activeStates);
-                console.log("Filtered Active Hotels:", activeHotels);
 
                 setStates(activeStates);
                 setHotels(activeHotels);
@@ -546,45 +791,152 @@ const Room = () => {
         });
     };
 
+    const handleImageChange = async (e) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        const uploadedUrls = [];
+
+        for (const file of files) {
+            const formDataToSend = new FormData();
+            formDataToSend.append("file", file);
+            formDataToSend.append("upload_preset", "pushpa");
+
+            try {
+                const response = await uploadImageToCloudinary(formDataToSend);
+                console.log("Cloudinary response:", response);
+
+                if (response && response.secure_url) {
+                    uploadedUrls.push(response.secure_url);
+                } else {
+                    console.error("Cloudinary response does not contain secure_url");
+                }
+            } catch (error) {
+                console.error("Upload failed:", error);
+            }
+        }
+
+        setFormData((prev) => {
+            const updated = {
+                ...prev,
+                images: [...prev.images, ...uploadedUrls],
+            };
+            console.log("Updated formData with images:", updated);
+            return updated;
+        });
+
+        if (uploadedUrls.length > 0) {
+            setImagePreview(uploadedUrls[0]);
+        }
+    };
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     console.log("Form submission started", formData);
+
+    //     try {
+    //         let newRoom;
+    //         if (editingId) {
+    //             console.log("Updating existing room with ID:", editingId);
+    //             const updatedRoom = await updateRoom(editingId, formData);
+    //             newRoom = updatedRoom.data;
+    //         } else {
+    //             console.log("Adding new room...");
+    //             const addedRoomResponse = await addRoom(formData);
+    //             newRoom = addedRoomResponse.data;
+    //         }
+
+    //         console.log("Room response after submission:", newRoom);
+
+    //         const roomRes = await getRooms();
+    //         setRooms(roomRes.data);
+
+    //         setFormData({
+    //             state: "",
+    //             city: "",
+    //             hotel: "",
+    //             type: "",
+    //             isAc: false,
+    //             images: [],
+    //         });
+    //         setImagePreview(null);
+    //         setFileInputKey(Date.now());
+    //         setEditingId(null);
+
+    //         console.log("Form reset after successful submission");
+    //     } catch (err) {
+    //         console.error("Room submission failed:", err);
+    //     }
+    // };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Form submission started", formData);
+
         try {
             let newRoom;
+            const payload = {
+                ...formData,
+                images: formData.images,
+            };
 
             if (editingId) {
-                const updatedRoom = await updateRoom(editingId, formData);
+                console.log("Updating existing room with ID:", editingId);
+                const updatedRoom = await updateRoom(editingId, payload);
                 newRoom = updatedRoom.data;
             } else {
-                const addedRoomResponse = await addRoom(formData);
+                console.log("Adding new room...");
+                const addedRoomResponse = await addRoom(payload);
                 newRoom = addedRoomResponse.data;
             }
 
-            setRooms((prevRooms) => [...prevRooms, newRoom]);
+            console.log("Room response after submission:", newRoom);
 
-            setFormData({ state: "", city: "", hotel: "", type: "", isAc: false });
+            const roomRes = await getRooms();
+            setRooms(roomRes.data);
+
+            setFormData({
+                state: "",
+                city: "",
+                hotel: "",
+                type: "",
+                isAc: false,
+                images: [],
+            });
+            setImagePreview(null);
+            setFileInputKey(Date.now());
             setEditingId(null);
 
+            console.log("Form reset after successful submission");
         } catch (err) {
-            console.error(err);
+            console.error("Room submission failed:", err);
         }
     };
 
     const handleEdit = (room) => {
+        console.log("Editing room:", room);
         setEditingId(room._id);
         setFormData({
             state: room.state?._id?.toString() || "",
             city: room.city || "",
             hotel: room.hotel?._id || "",
             type: room.type,
-            ac: room.isAc,
+            isAc: room.isAc,
+            images: room.images || [],
         });
+
+        setImagePreview(room.images?.[0] || null);
+        console.log("Form data after editing:", room);
     };
 
     const handleToggle = async (id) => {
         try {
+            console.log("Toggling room status for room ID:", id);
             await toggleRoomStatus(id);
             const roomRes = await getRooms();
             setRooms(roomRes.data);
+            console.log("Rooms after status toggle:", roomRes.data);
         } catch (err) {
             console.error("Toggle failed", err);
         }
@@ -592,8 +944,15 @@ const Room = () => {
 
     const handleDelete = async (id) => {
         try {
-            await deleteRoom(id);
-            setRooms((prev) => prev.filter((r) => r._id !== id));
+            console.log("Deleting room with ID:", id);
+
+            const response = await deleteRoom(id);
+            if (response?.data?.message === "Room and images deleted successfully") {
+                setRooms((prev) => prev.filter((room) => room._id !== id));
+                console.log("Room and images deleted successfully");
+            } else {
+                console.error("Failed to delete room or images");
+            }
         } catch (err) {
             console.error("Delete failed", err);
         }
@@ -601,9 +960,8 @@ const Room = () => {
 
     const filteredHotels = formData.state
         ? hotels.filter((h) => {
-            const hotelStateId = typeof h.state === 'object' ? h.state._id : h.state;
+            const hotelStateId = typeof h.state === "object" ? h.state._id : h.state;
             const isHotelActive = h.isActive === true || h.active === true;
-
             return hotelStateId?.toString() === formData.state?.toString() && isHotelActive;
         })
         : [];
@@ -622,13 +980,11 @@ const Room = () => {
                             value={formData.state}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
                         >
                             <option value="">Select State</option>
                             {states.map((s) => (
-                                <option key={s._id} value={s._id.toString()}>
-                                    {s.name}
-                                </option>
+                                <option key={s._id} value={s._id}>{s.name}</option>
                             ))}
                         </select>
                     </div>
@@ -639,11 +995,10 @@ const Room = () => {
                             type="text"
                             name="city"
                             id="city"
-                            placeholder="Enter City"
                             value={formData.city}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
                         />
                     </div>
 
@@ -655,13 +1010,11 @@ const Room = () => {
                             value={formData.hotel}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
                         >
                             <option value="">Select Hotel</option>
                             {filteredHotels.map((h) => (
-                                <option key={h._id} value={h._id}>
-                                    {h.name}
-                                </option>
+                                <option key={h._id} value={h._id}>{h.name}</option>
                             ))}
                         </select>
                     </div>
@@ -674,13 +1027,11 @@ const Room = () => {
                             value={formData.type}
                             onChange={handleChange}
                             required
-                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
                         >
                             <option value="">Select Room Type</option>
                             {roomTypes.map((t, i) => (
-                                <option key={i} value={t}>
-                                    {t}
-                                </option>
+                                <option key={i} value={t}>{t}</option>
                             ))}
                         </select>
                     </div>
@@ -692,19 +1043,61 @@ const Room = () => {
                                 name="isAc"
                                 checked={formData.isAc}
                                 onChange={handleChange}
-                                className="h-5 w-5 text-indigo-500 focus:ring-indigo-500 border-gray-300 rounded"
+                                className="h-5 w-5 text-indigo-500"
                             />
                             <span>AC Room</span>
                         </label>
                     </div>
-                </div>
 
-                <button
-                    type="submit"
-                    className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200"
-                >
-                    {editingId ? "Update Room" : "Add Room"}
-                </button>
+                    <div>
+                        <label htmlFor="images" className="block text-sm font-medium text-gray-700">Room Images</label>
+                        <input
+                            type="file"
+                            name="images"
+                            id="images"
+                            key={fileInputKey}
+                            onChange={handleImageChange}
+                            multiple
+                            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                        {imagePreview && (
+                            <div className="mt-4">
+                                <img src={imagePreview} alt="Preview" className="w-full h-auto rounded" />
+                            </div>
+                        )}
+                    </div>
+
+                    {formData.images.length > 0 && (
+                        <div className="flex flex-wrap mt-4 gap-2">
+                            {formData.images.map((url, index) => (
+                                <div key={index} className="relative">
+                                    <img src={url} alt={`Preview ${index}`} className="w-24 h-24 object-cover rounded" />
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                images: prev.images.filter((_, i) => i !== index),
+                                            }))
+                                        }
+                                        className="absolute top-0 right-0 bg-red-600 text-white rounded-full px-1 text-xs"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="col-span-2">
+                        <button
+                            type="submit"
+                            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700"
+                        >
+                            {editingId ? "Update Room" : "Add Room"}
+                        </button>
+                    </div>
+                </div>
             </form>
 
             <div className="mt-10">
@@ -720,6 +1113,7 @@ const Room = () => {
                                     <p className="text-lg font-semibold text-gray-800">{room.type} – {room.isAc ? "AC" : "Non-AC"}</p>
                                     <p className="text-sm text-gray-600">{room.hotel?.name}, {room.city}</p>
                                 </div>
+
                                 <div className="space-x-4">
                                     <button
                                         onClick={() => handleEdit(room)}
@@ -741,6 +1135,22 @@ const Room = () => {
                                     </button>
                                 </div>
                             </div>
+
+                            {/* Display Room Images */}
+                            <div className="mt-4 flex space-x-4">
+                                {room.images && room.images.length > 0 ? (
+                                    room.images.map((image, index) => (
+                                        <img
+                                            key={index}
+                                            src={image}
+                                            alt={`Room ${index + 1}`}
+                                            className="w-32 h-32 object-cover rounded-md"
+                                        />
+                                    ))
+                                ) : (
+                                    <p>No images available</p>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -759,14 +1169,10 @@ const Room = () => {
                                     <p className="text-lg font-semibold text-gray-800">{room.type} – {room.isAc ? "AC" : "Non-AC"}</p>
                                     <p className="text-sm text-gray-600">{room.hotel?.name}, {room.city}</p>
                                 </div>
+
                                 <div className="space-x-4">
                                     <button
-                                        onClick={() => {
-                                            if (room.active) {
-                                                handleEdit(room);
-                                            }
-                                        }}
-                                        disabled={!room.active}
+                                        onClick={() => handleEdit(room)}
                                         className={`px-4 py-2 rounded-md transition duration-150 ${room.active
                                             ? "bg-blue-600 text-white hover:bg-blue-700"
                                             : "bg-gray-400 text-white cursor-not-allowed"
@@ -787,6 +1193,22 @@ const Room = () => {
                                         Delete
                                     </button>
                                 </div>
+                            </div>
+
+                            {/* Display Room Images */}
+                            <div className="mt-4 flex space-x-4">
+                                {room.images && room.images.length > 0 ? (
+                                    room.images.map((image, index) => (
+                                        <img
+                                            key={index}
+                                            src={image}
+                                            alt={`Room ${index + 1}`}
+                                            className="w-32 h-32 object-cover rounded-md"
+                                        />
+                                    ))
+                                ) : (
+                                    <p>No images available</p>
+                                )}
                             </div>
                         </div>
                     ))}
