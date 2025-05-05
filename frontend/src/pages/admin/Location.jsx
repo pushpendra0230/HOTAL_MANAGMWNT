@@ -1017,7 +1017,7 @@ const Location = () => {
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Manage Locations</h1>
 
       {/* Form */}
-      <form
+      {/* <form
         onSubmit={handleSubmit}
         className="mb-8 bg-white rounded-xl shadow-md p-6 flex flex-wrap gap-4 items-end"
       >
@@ -1043,6 +1043,43 @@ const Location = () => {
             </option>
           ))}
         </select>
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded transition"
+        >
+          {editingId ? "Update" : "Add"}
+        </button>
+      </form> */}
+
+      <form
+        onSubmit={handleSubmit}
+        className="mb-8 bg-white rounded-xl shadow-md p-6 flex flex-wrap gap-4 items-end"
+      >
+        {error && <p className="text-red-500 w-full">{error}</p>}
+
+        <select
+          value={formData.state}
+          onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+          required
+          className="flex-1 border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Select State</option>
+          {states.map((state) => (
+            <option key={state._id} value={state._id}>
+              {state.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="text"
+          placeholder="City"
+          value={formData.city}
+          onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+          required
+          className="flex-1 border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-blue-500"
+        />
+
         <button
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded transition"

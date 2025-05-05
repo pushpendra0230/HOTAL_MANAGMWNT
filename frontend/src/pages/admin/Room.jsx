@@ -1861,7 +1861,7 @@ const Room = () => {
             </div>
 
             <div className="mt-10">
-                <h3 className="text-2xl font-semibold text-gray-800 mb-6">Deactivated Rooms</h3>
+                <h3 className="text-2xl font-semibold text-red-500 mb-6">Deactivated Rooms</h3>
                 <div className="space-y-6">
                     {getFilteredSortedRooms(false).map((room) => (
                         <div

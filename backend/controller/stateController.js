@@ -81,9 +81,10 @@ exports.getAllStates = async (req, res) => {
     }
 };
 
-
+// // Updated to only get active states
 // exports.getAllStates = async (req, res) => {
 //     try {
+//         // Only fetch states where isActive is true
 //         const states = await State.find({ isActive: true }).sort({ createdAt: -1 }).lean();
 //         res.status(200).json({ success: true, data: states });
 //     } catch (error) {

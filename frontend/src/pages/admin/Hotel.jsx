@@ -609,13 +609,36 @@ const Hotel = () => {
                 </select>
             </div>
 
-            {/* Form */}
             <form
                 onSubmit={handleSubmit}
                 className="mb-10 bg-white rounded-xl shadow-md p-6 flex flex-wrap gap-4"
             >
                 {error && <p className="text-red-500 w-full">{error}</p>}
 
+                {/* State (moved to top) */}
+                <select
+                    value={formData.state}
+                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                    className="flex-1 border px-4 py-2 rounded"
+                >
+                    <option value="">Select State</option>
+                    {states.map((state) => (
+                        <option key={state._id} value={state._id}>
+                            {state.name}
+                        </option>
+                    ))}
+                </select>
+
+                {/* City (moved to top) */}
+                <input
+                    type="text"
+                    placeholder="City Name"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="flex-1 border px-4 py-2 rounded"
+                />
+
+                {/* Rest of the fields */}
                 <input
                     type="text"
                     placeholder="Hotel Name"
@@ -657,25 +680,7 @@ const Hotel = () => {
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="w-full border px-4 py-2 rounded"
                 />
-                <select
-                    value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="flex-1 border px-4 py-2 rounded"
-                >
-                    <option value="">Select State</option>
-                    {states.map((state) => (
-                        <option key={state._id} value={state._id}>
-                            {state.name}
-                        </option>
-                    ))}
-                </select>
-                <input
-                    type="text"
-                    placeholder="City Name"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="flex-1 border px-4 py-2 rounded"
-                />
+
                 <button
                     type="submit"
                     className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"

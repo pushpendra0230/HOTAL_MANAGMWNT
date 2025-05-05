@@ -9,6 +9,16 @@ const getHotels = async (req, res) => {
     }
 };
 
+// const getHotels = async (req, res) => {
+//     try {
+//         const hotels = await Hotel.find({ active: true }) // Only active hotels
+//             .populate("state");
+//         res.json(hotels);
+//     } catch (error) {
+//         res.status(500).json({ error: "Failed to fetch hotels" });
+//     }
+// };
+
 const addHotel = async (req, res) => {
     try {
         const newHotel = new Hotel(req.body);

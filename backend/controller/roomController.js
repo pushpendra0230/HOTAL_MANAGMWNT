@@ -152,6 +152,18 @@ const getRooms = async (req, res) => {
     }
 };
 
+
+// const getRooms = async (req, res) => {
+//     try {
+//         const rooms = await Room.find({ active: true }) // Only active rooms
+//             .populate("hotel")
+//             .populate("state");
+//         res.json(rooms);
+//     } catch (error) {
+//         res.status(500).json({ error: "Failed to fetch rooms" });
+//     }
+// };
+
 const addRoom = async (req, res) => {
     try {
         let imageUrls = [];
