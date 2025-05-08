@@ -47,6 +47,33 @@
 
 
 
+// const mongoose = require("mongoose");
+
+// const roomSchema = new mongoose.Schema(
+//     {
+//         hotel: { type: mongoose.Schema.Types.ObjectId, ref: "Hotel", required: true },
+//         state: { type: mongoose.Schema.Types.ObjectId, ref: "State", required: true },
+//         city: { type: String, required: true },
+//         type: {
+//             type: String,
+//             enum: ["Normal Bed", "Medium Bed", "King Size Bed"],
+//             required: true,
+//         },
+//         isAc: { type: Boolean, default: false },
+//         active: { type: Boolean, default: true },
+//         images: { type: [String], default: [] },
+//     },
+//     { timestamps: true }
+// );
+
+// module.exports = mongoose.model("Room", roomSchema);
+
+
+
+
+
+
+
 const mongoose = require("mongoose");
 
 const roomSchema = new mongoose.Schema(
@@ -62,6 +89,10 @@ const roomSchema = new mongoose.Schema(
         isAc: { type: Boolean, default: false },
         active: { type: Boolean, default: true },
         images: { type: [String], default: [] },
+
+        // ✅ New fields
+        roomNumber: { type: String, required: true },
+        price: { type: Number, required: true },
     },
     { timestamps: true }
 );

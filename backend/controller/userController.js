@@ -429,6 +429,8 @@ exports.login = async (req, res) => {
     message: "Login successfully",
     token: token,
     role: existingEmail.role,
+    _id: existingEmail._id,
+    email: existingEmail.email,
   });
 };
 

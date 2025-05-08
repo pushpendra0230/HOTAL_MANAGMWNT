@@ -1,0 +1,11 @@
+const jwt = require("jsonwebtoken");
+const userModel = require("../model/userModel");
+const secret = process.env.secretKey;
+
+module.exports = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        return next();
+    } else {
+        return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+};

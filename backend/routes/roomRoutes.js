@@ -41,5 +41,6 @@ router.post('/', roomController.addRoom);
 router.put('/:id', roomController.updateRoom);
 router.patch('/toggle-status/:id', roomController.toggleRoomStatus);
 router.delete('/:id', roomController.deleteRoom);
+router.get("/:id", roomController.getRoomDetails);
 
 module.exports = router;

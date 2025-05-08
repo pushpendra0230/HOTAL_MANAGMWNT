@@ -122,7 +122,6 @@ exports.toggleStateStatus = async (req, res) => {
         state.isActive = newStatus;
         await state.save();
 
-        // Update cities (Location model)
         await Location.updateMany(
             { state: state._id },
             { $set: { isActive: newStatus } }

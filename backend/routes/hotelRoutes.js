@@ -3,6 +3,7 @@ const router = express.Router();
 const hotelController = require('../controller/hotelController');
 
 router.get('/', hotelController.getHotels);
+router.get("/:id", hotelController.getHotelById);
 router.post('/', hotelController.addHotel);
 router.put('/:id', hotelController.updateHotel);
 router.patch('/toggle-status/:id', hotelController.toggleHotelStatus);
