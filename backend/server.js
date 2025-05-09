@@ -229,11 +229,11 @@ const hotelRoutes = require("./routes/hotelRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const uploadRoutes = require("./routes/upload");
 const bookingRoutes = require("./routes/bookingRoutes");
+const couponRoutes = require("./routes/couponRouter")
 
 const app = express();
 const port = process.env.PORT || 6001;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
@@ -246,8 +246,8 @@ app.use("/api/hotels", hotelRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/coupons", couponRoutes);
 
-// DB & Server start
 connectDb()
   .then(() => {
     app.listen(port, () => {

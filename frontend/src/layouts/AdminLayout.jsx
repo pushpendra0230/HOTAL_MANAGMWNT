@@ -218,6 +218,14 @@ const AdminLayout = () => {
                     </li>
                     <li>
                         <Link
+                            to="/admin/coupons"
+                            className="block p-3 rounded bg-gray-700 hover:bg-gray-600 transition-colors duration-200"
+                        >
+                            🎟️ Manage Coupons
+                        </Link>
+                    </li>
+                    <li>
+                        <Link
                             to="/admin/view-user-bookings"
                             className="block p-3 rounded bg-gray-700 hover:bg-gray-600 transition-colors duration-200"
                         >

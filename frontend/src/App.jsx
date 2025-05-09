@@ -391,6 +391,7 @@ import BookingForm from "./pages/users/BookingForm";
 import MyBookings from "./pages/users/MyBookings";
 import BookingPanel from "./pages/admin/BookingPanel";
 import AdminViewUser from "./pages/admin/AdminViewUser";
+import AddCoupon from "./pages/admin/AddCoupon";
 
 const router = createBrowserRouter([
   { path: "/", element: <LogIn /> },
@@ -411,6 +412,7 @@ const router = createBrowserRouter([
       { path: "hotels", element: <Hotel /> },
       { path: "rooms", element: <Room /> },
       { path: "bookings", element: <BookingPanel /> },
+      { path: "coupons", element: <AddCoupon /> },
     ],
   },
   {
