@@ -390,6 +390,7 @@ import AddRoomPage from "./pages/users/AddRoomPage";
 import BookingForm from "./pages/users/BookingForm";
 import MyBookings from "./pages/users/MyBookings";
 import BookingPanel from "./pages/admin/BookingPanel";
+import AdminViewUser from "./pages/admin/AdminViewUser";
 
 const router = createBrowserRouter([
   { path: "/", element: <LogIn /> },
@@ -411,6 +412,14 @@ const router = createBrowserRouter([
       { path: "rooms", element: <Room /> },
       { path: "bookings", element: <BookingPanel /> },
     ],
+  },
+  {
+    path: "/admin/view-user-bookings",
+    element: (
+      <ProtectedRoute allowedRole="admin">
+        <AdminViewUser />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/user",

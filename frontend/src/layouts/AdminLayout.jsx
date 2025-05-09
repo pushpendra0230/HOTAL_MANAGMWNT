@@ -216,6 +216,14 @@ const AdminLayout = () => {
                             📅 Manage Bookings
                         </Link>
                     </li>
+                    <li>
+                        <Link
+                            to="/admin/view-user-bookings"
+                            className="block p-3 rounded bg-gray-700 hover:bg-gray-600 transition-colors duration-200"
+                        >
+                            👁️ View User Bookings
+                        </Link>
+                    </li>
                 </ul>
             </div>
 

@@ -20,5 +20,6 @@ const bookingController = require("../controller/bookingController");
 router.post("/add", auth, bookingController.addBooking);
 router.get("/getAll", auth, bookingController.getBooking);
 router.patch("/update/:id", auth, isAdmin, bookingController.updateBooking);
+router.patch("/update-checking/:id", auth, bookingController.updateCheckingStatus);
 
 module.exports = router;

@@ -55,3 +55,24 @@ export const updateBookingStatus = async (bookingId, status) => {
         throw new Error(error.response?.data?.message || "Failed to update booking status");
     }
 };
+
+export const updateCheckingStatus = async (bookingId, isChecking) => {
+    const token = localStorage.getItem("token");
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    try {
+        const response = await axiosInstance.patch(
+            `/api/bookings/update-checking/${bookingId}`,
+            { isChecking },
+            config
+        );
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Failed to update check-in status");
+    }
+};

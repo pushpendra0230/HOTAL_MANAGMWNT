@@ -463,7 +463,7 @@
 
 
 import React, { useState, useEffect } from "react";
-import { DollarSign, Users, Bed } from "lucide-react";
+import { Users, Bed } from "lucide-react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import BASE_URL from "../../utils/api";
@@ -530,57 +530,76 @@ const AddRoomPage = () => {
                     Room Details
                 </h1>
 
-                <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
-                    <div className="relative h-48 mb-6">
-                        <img
-                            src={room?.images?.[0] || "https://via.placeholder.com/600x400"}
-                            alt="Room"
-                            className="w-full h-full object-cover rounded-xl"
-                        />
+                <div className="max-w-4xl mx-auto bg-white/70 backdrop-blur-md shadow-xl rounded-2xl p-10 border border-gray-200 transition-all duration-300 hover:shadow-2xl">
+
+                    {/* MULTIPLE IMAGES SCROLL */}
+                    <div className="flex gap-4 overflow-x-auto mb-8 pb-2 rounded-xl">
+                        {room?.images?.length > 0 ? (
+                            room.images.map((img, index) => (
+                                <img
+                                    key={index}
+                                    src={img}
+                                    alt={`Room Image ${index + 1}`}
+                                    className="h-60 w-auto rounded-lg shadow-md object-cover transition-transform duration-300 hover:scale-105"
+                                />
+                            ))
+                        ) : (
+                            <img
+                                src="https://via.placeholder.com/600x400"
+                                alt="No Image"
+                                className="h-60 w-auto rounded-lg"
+                            />
+                        )}
                     </div>
 
-                    <h2 className="text-3xl font-bold text-gray-800">
-                        Room {room?.roomNumber || "N/A"}
-                    </h2>
-                    <p className="text-lg text-gray-600">
-                        {hotel?.name || "Hotel Name"}
-                    </p>
+                    {/* ROOM INFO */}
+                    <div className="mb-6">
+                        <h2 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
+                            {hotel?.name || "Hotel Name"}
+                        </h2>
+                        <p className="text-gray-500 text-base">
+                            {room?.type || "Room Type"} • {room?.isAc ? "AC" : "Non-AC"} • {room?.capacity || 2} Guests
+                        </p>
+                    </div>
 
-                    <div className="mt-6 flex flex-wrap gap-4">
-                        <div className="flex items-center text-sm text-gray-600">
-                            <div className="w-4 h-4 text-green-500" />
-                            <span className="font-semibold">₹{room?.price || 0}/night</span>
+                    {/* DETAILS GRID */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm text-gray-700 mb-6">
+                        <div className="flex items-center gap-2">
+                            <span className="text-green-600 font-semibold">₹{room?.price || 0}</span>
+                            <span className="text-gray-500">/night</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                            <Users className="w-4 h-4 mr-1 text-blue-500" />
-                            <span>{room?.type || "Room Type"}</span>
+                        <div className="flex items-center gap-2">
+                            <Users className="w-5 h-5 text-blue-500" />
+                            <span>{room?.type || "Type"}</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                            <Bed className="w-4 h-4 mr-1 text-gray-600" />
+                        <div className="flex items-center gap-2">
+                            <Bed className="w-5 h-5 text-gray-600" />
                             <span>{room?.capacity || 2} guests</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                            <span className="ml-1">
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-600">
                                 {room?.isAc ? "AC Room" : "Non-AC Room"}
                             </span>
                         </div>
                     </div>
 
-                    <p className="mt-6 text-gray-700">
+                    <p className="text-gray-800 leading-relaxed">
                         {hotel?.description || "No description available."}
                     </p>
+                </div>
 
-                    <div className="mt-6 flex justify-center">
-                        <button
-                            onClick={handleBookNow}
-                            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all"
-                        >
-                            Book Now
-                        </button>
-                    </div>
+                {/* BOOK NOW BUTTON */}
+                <div className="mt-6 flex justify-center">
+                    <button
+                        onClick={handleBookNow}
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all"
+                    >
+                        Book Now
+                    </button>
                 </div>
             </div>
 
+            {/* BOOKING FORM */}
             {showBookingForm && (
                 <BookingForm
                     price={room?.price || 0}

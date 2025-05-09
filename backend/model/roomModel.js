@@ -89,8 +89,6 @@ const roomSchema = new mongoose.Schema(
         isAc: { type: Boolean, default: false },
         active: { type: Boolean, default: true },
         images: { type: [String], default: [] },
-
-        // ✅ New fields
         roomNumber: { type: String, required: true },
         price: { type: Number, required: true },
     },

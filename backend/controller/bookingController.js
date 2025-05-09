@@ -242,3 +242,47 @@ exports.updateBooking = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+exports.updateCheckingStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isChecking } = req.body;
+
+        if (!["Confirm", "Cancel", "Pending"].includes(isChecking)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid check-in status value",
+            });
+        }
+
+        const booking = await bookingModel.findById(id);
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found",
+            });
+        }
+
+        if (booking.userId.toString() !== req.user.id.toString() && req.user.role !== "admin") {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized to update check-in status",
+            });
+        }
+
+        booking.isChecking = isChecking;
+        const updatedBooking = await booking.save();
+
+        res.status(200).json({
+            success: true,
+            message: `Check-in status updated to ${isChecking}`,
+            data: updatedBooking,
+        });
+    } catch (error) {
+        console.error("Error in updateCheckingStatus:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error while updating check-in status",
+        });
+    }
+};
