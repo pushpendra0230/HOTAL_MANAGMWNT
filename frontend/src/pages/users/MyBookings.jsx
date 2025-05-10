@@ -444,6 +444,187 @@
 
 
 
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+// import Swal from 'sweetalert2';
+// import BASE_URL from '../../utils/api';
+// import { useNavigate } from 'react-router-dom';
+
+// const MyBookings = () => {
+//     const [bookings, setBookings] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState('');
+//     const navigate = useNavigate();
+
+//     const token = localStorage.getItem("token");
+//     const config = {
+//         headers: {
+//             Authorization: `Bearer ${token}`,
+//         },
+//     };
+
+//     useEffect(() => {
+//         const fetchBookings = async () => {
+//             try {
+//                 const response = await axios.get(`${BASE_URL}/api/bookings/getAll`, config);
+//                 const user = JSON.parse(localStorage.getItem('user'));
+//                 const userId = user?.userId;
+
+//                 if (!userId) {
+//                     Swal.fire('Unauthorized', 'User is not logged in!', 'error');
+//                     setError('User is not logged in');
+//                     setLoading(false);
+//                     return;
+//                 }
+
+//                 const userBookings = response.data.data.filter(
+//                     (b) => b.userId?._id?.toString() === userId || b.userId?.toString() === userId
+//                 );
+//                 setBookings(userBookings);
+//                 Swal.fire('Success', 'Your bookings were loaded successfully!', 'success');
+//             } catch (err) {
+//                 Swal.fire('Error', err.message || 'Error fetching bookings', 'error');
+//                 setError(err.message || 'Error fetching bookings');
+//             } finally {
+//                 setLoading(false);
+//             }
+//         };
+
+//         fetchBookings();
+//     }, []);
+
+//     const handleCheckingStatus = async (id, status) => {
+//         const confirmation = await Swal.fire({
+//             title: `${status} Check-in?`,
+//             text: `Are you sure you want to ${status.toLowerCase()} check-in for this booking?`,
+//             icon: 'warning',
+//             showCancelButton: true,
+//             confirmButtonColor: status === 'Confirm' ? '#3085d6' : '#d33',
+//             cancelButtonColor: '#aaa',
+//             confirmButtonText: `Yes, ${status.toLowerCase()} it!`
+//         });
+
+//         if (!confirmation.isConfirmed) return;
+
+//         try {
+//             await axios.patch(
+//                 `${BASE_URL}/api/bookings/update-checking/${id}`,
+//                 { isChecking: status },
+//                 config
+//             );
+//             setBookings((prevBookings) =>
+//                 prevBookings.map((booking) =>
+//                     booking._id === id ? { ...booking, isChecking: status } : booking
+//                 )
+//             );
+//             Swal.fire('Updated', `Check-in status updated to ${status}`, 'success');
+//         } catch (error) {
+//             Swal.fire('Error', 'Failed to update check-in status.', 'error');
+//         }
+//     };
+
+//     if (loading) {
+//         return (
+//             <div className="flex justify-center items-center h-screen text-lg text-gray-600">
+//                 Loading your bookings...
+//             </div>
+//         );
+//     }
+
+//     if (error) {
+//         return (
+//             <div className="p-6 text-red-600 font-medium text-center">
+//                 {error}
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="p-6 min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+//             <h2 className="text-4xl font-extrabold text-indigo-900 mb-10 text-center tracking-wide">
+//                 📘 My Bookings
+//             </h2>
+
+//             {bookings.length === 0 ? (
+//                 <div className="text-center mt-16 text-gray-600">
+//                     <p className="text-2xl font-medium mb-6">You have no bookings yet.</p>
+//                     <button
+//                         onClick={() => navigate('/user')}
+//                         className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition duration-300"
+//                     >
+//                         🏨 Explore Hotels & Book Now
+//                     </button>
+//                 </div>
+//             ) : (
+//                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+//                     {bookings.map((booking) => (
+//                         <div
+//                             key={booking._id}
+//                             className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-xl transition duration-300"
+//                         >
+//                             <div className="mb-4">
+//                                 <h3 className="text-xl font-semibold text-indigo-700 mb-2">
+//                                     🛏️ Room #{booking.roomId?.roomNumber || 'N/A'}
+//                                 </h3>
+//                                 <div className="text-sm text-gray-500">
+//                                     Booking ID: <span className="font-mono">{booking._id}</span>
+//                                 </div>
+//                             </div>
+
+//                             <div className="space-y-2 text-gray-700">
+//                                 <p><span className="font-semibold">📅 Check-in:</span> {new Date(booking.checkInDate).toLocaleDateString()}</p>
+//                                 <p><span className="font-semibold">📆 Check-out:</span> {new Date(booking.checkOutDate).toLocaleDateString()}</p>
+//                                 <p><span className="font-semibold">👨‍👩‍👧 Guests:</span> {booking.numberOfGuests}</p>
+//                                 <p><span className="font-semibold">💰 Total Amount:</span> ₹{booking.totalAmount}</p>
+//                                 <p>
+//                                     <span className="font-semibold">📌 Status:</span>
+//                                     <span className={`ml-2 px-2 py-1 text-xs rounded-full ${booking.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800'}`}>
+//                                         {booking.status}
+//                                     </span>
+//                                 </p>
+//                                 <p>
+//                                     <span className="font-semibold">✅ Check-in Status:</span>
+//                                     <span className={`ml-2 px-2 py-1 text-xs rounded-full ${booking.isChecking === 'Confirm' ? 'bg-green-100 text-green-700' : booking.isChecking === 'Cancel' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'}`}>
+//                                         {booking.isChecking}
+//                                     </span>
+//                                 </p>
+//                             </div>
+
+//                             {booking.status === "Approved" && booking.isChecking === "Pending" && (
+//                                 <div className="mt-4 flex gap-3">
+//                                     <button
+//                                         onClick={() => handleCheckingStatus(booking._id, "Confirm")}
+//                                         className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold transition"
+//                                     >
+//                                         ✅ Confirm Check-in
+//                                     </button>
+//                                     <button
+//                                         onClick={() => handleCheckingStatus(booking._id, "Cancel")}
+//                                         className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold transition"
+//                                     >
+//                                         ❌ Cancel Check-in
+//                                     </button>
+//                                 </div>
+//                             )}
+//                         </div>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//     );
+// };
+
+// export default MyBookings;
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -571,6 +752,10 @@ const MyBookings = () => {
                                 </div>
                             </div>
 
+                            <div className="mb-2 text-sm font-medium text-indigo-800">
+                                👤 Booked by: {booking.userName || booking.userId?.name || 'N/A'}
+                            </div>
+
                             <div className="space-y-2 text-gray-700">
                                 <p><span className="font-semibold">📅 Check-in:</span> {new Date(booking.checkInDate).toLocaleDateString()}</p>
                                 <p><span className="font-semibold">📆 Check-out:</span> {new Date(booking.checkOutDate).toLocaleDateString()}</p>
@@ -596,13 +781,13 @@ const MyBookings = () => {
                                         onClick={() => handleCheckingStatus(booking._id, "Confirm")}
                                         className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold transition"
                                     >
-                                        ✅ Confirm
+                                        ✅ Confirm Check-in
                                     </button>
                                     <button
                                         onClick={() => handleCheckingStatus(booking._id, "Cancel")}
                                         className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold transition"
                                     >
-                                        ❌ Cancel
+                                        ❌ Cancel Check-in
                                     </button>
                                 </div>
                             )}
