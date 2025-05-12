@@ -277,6 +277,7 @@ const jwt = require("jsonwebtoken");
 const moment = require("moment");
 const userModel = require("../model/userModel");
 const { sendOtpEmail } = require("../utils/sendMail");
+const { uploadToCloudinary } = require("../helpers/helper");
 const crypto = require("crypto");
 
 exports.createUsers = async (req, res) => {
@@ -496,5 +497,55 @@ exports.resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Reset Password Error:", error.message, error.stack);
     return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // Comes from auth middleware
+    const user = await userModel.findById(userId).select("-password -otp -otpExpire");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User data fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error.message);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+exports.uploadUserProfileImage = async (req, res) => {
+  try {
+    const file = req.files?.image;
+
+    if (!file) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    const imageUrl = await uploadToCloudinary(file.data, file.name);
+
+    // Update the user's profile with the image URL
+    const updatedUser = await userModel.findByIdAndUpdate(
+      req.user.id,
+      { profilePic: imageUrl },  // Updated to use profilePic
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Image uploaded successfully",
+      imageUrl,
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
   }
 };

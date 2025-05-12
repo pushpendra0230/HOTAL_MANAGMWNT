@@ -9,6 +9,8 @@ router.post("/resend-otp", userController.resendOtp);
 router.post("/login", userController.login);
 router.post("/forgot-password", userController.forgetPassword);
 router.post("/reset-password", userController.resetPassword);
+router.get("/profile", auth, userController.getUserProfile);
+router.post("/upload-profile", auth, userController.uploadUserProfileImage);
 
 
 module.exports = router;

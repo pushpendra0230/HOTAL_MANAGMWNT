@@ -17,7 +17,7 @@ const uploadToCloudinary = async (buffer, originalname) => {
             );
             uploadStream.end(buffer);
         });
-
+        console.log("Cloudinary upload result:", result);
         return result.secure_url;
     } catch (error) {
         console.error("Cloudinary upload error:", error);
