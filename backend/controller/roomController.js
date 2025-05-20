@@ -313,7 +313,7 @@ const getRooms = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch rooms" });
     }
 };
-
+    
 const addRoom = async (req, res) => {
     try {
         let imageUrls = [];

@@ -1336,7 +1336,6 @@
 
 
 
-
 import React, { useEffect, useState } from 'react';
 import { getHotels } from '../../api/hotelApi';
 import { getRooms } from '../../api/roomApi';
@@ -1392,13 +1391,32 @@ const User = () => {
     }
   }, [selectedState, hotels]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/');
+  const handleStateChange = (e) => {
+    setSelectedState(e.target.value);
+    setSelectedCity('');
+    setSelectedHotel('');
+  };
+
+  const handleCityChange = (e) => {
+    setSelectedCity(e.target.value);
+    setSelectedHotel('');
+  };
+
+  const handleHotelChange = (e) => {
+    setSelectedHotel(e.target.value);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   const handleAddRoom = (roomId) => {
     navigate(`/user/add-room/${roomId}`);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
   const activeHotels = hotels.filter(hotel => hotel.active);
@@ -1416,6 +1434,7 @@ const User = () => {
     : rooms.filter(room => room.active);
 
   const sortedStates = stateSort === 'asc' ? [...states].sort() : [...states].sort().reverse();
+
   const sortedHotels = hotelSort === 'asc'
     ? [...filteredHotels].sort((a, b) => a.name.localeCompare(b.name))
     : [...filteredHotels].sort((a, b) => b.name.localeCompare(a.name));
@@ -1430,64 +1449,60 @@ const User = () => {
 
   return (
     <div className="p-4 sm:p-6 bg-gradient-to-b from-blue-50 to-white min-h-screen">
-      <h1 className="text-4xl font-extrabold text-center text-indigo-800 mb-10 drop-shadow">🏨 Explore Hotels & Rooms</h1>
+      <div className="bg-image" style={{ backgroundImage: `url('bg-image-path')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <h1 className="text-4xl font-extrabold text-center text-indigo-800 mb-10 drop-shadow">🏨 Explore Hotels & Rooms</h1>
 
-      {user && (
-        <div className="flex justify-end mb-6 gap-2">
-          <button
-            onClick={() => navigate('/user/profile')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full shadow-md transition"
-          >
-            👤 Profile
-          </button>
-          <button
-            onClick={() => navigate('/my-bookings')}
-            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full shadow-md transition"
-          >
-            📘 My Bookings
-          </button>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full shadow-md transition"
-          >
-            🚪 Logout
-          </button>
-        </div>
-      )}
+        {user && (
+          <div className="flex justify-end mb-6 gap-2">
+            <button
+              onClick={() => navigate('/my-bookings')}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full shadow-md transition"
+            >
+              📘 My Bookings
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full shadow-md transition"
+            >
+              🚪 Logout
+            </button>
+          </div>
+        )}
 
-      <div className="mb-8 flex justify-center">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search Hotels..."
-          className="p-3 rounded-xl border border-gray-300 shadow-sm w-full max-w-md"
-        />
-      </div>
-
-      <div className="mb-8 flex justify-center gap-4">
-        <div className="flex items-center gap-2">
-          <label>Sort by State:</label>
-          <select
-            value={stateSort}
-            onChange={(e) => setStateSort(e.target.value)}
-            className="p-3 rounded-xl border border-gray-300 shadow-sm"
-          >
-            <option value="asc">A to Z</option>
-            <option value="desc">Z to A</option>
-          </select>
+        <div className="mb-8 flex justify-center">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search Hotels..."
+            className="p-3 rounded-xl border border-gray-300 shadow-sm w-full max-w-md"
+          />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label>Sort by Hotel:</label>
-          <select
-            value={hotelSort}
-            onChange={(e) => setHotelSort(e.target.value)}
-            className="p-3 rounded-xl border border-gray-300 shadow-sm"
-          >
-            <option value="asc">A to Z</option>
-            <option value="desc">Z to A</option>
-          </select>
+        <div className="mb-8 flex justify-center gap-4">
+          <div className="flex items-center gap-2">
+            <label>Sort by State:</label>
+            <select
+              value={stateSort}
+              onChange={(e) => setStateSort(e.target.value)}
+              className="p-3 rounded-xl border border-gray-300 shadow-sm"
+            >
+              <option value="asc">A to Z</option>
+              <option value="desc">Z to A</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label>Sort by Hotel:</label>
+            <select
+              value={hotelSort}
+              onChange={(e) => setHotelSort(e.target.value)}
+              className="p-3 rounded-xl border border-gray-300 shadow-sm"
+            >
+              <option value="asc">A to Z</option>
+              <option value="desc">Z to A</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -1495,7 +1510,7 @@ const User = () => {
         <select
           className="p-3 rounded-xl border border-gray-300 shadow-sm"
           value={selectedState}
-          onChange={(e) => setSelectedState(e.target.value)}
+          onChange={handleStateChange}
         >
           <option value="">Select a State</option>
           {sortedStates.map(state => (
@@ -1506,7 +1521,7 @@ const User = () => {
         <select
           className="p-3 rounded-xl border border-gray-300 shadow-sm"
           value={selectedCity}
-          onChange={(e) => setSelectedCity(e.target.value)}
+          onChange={handleCityChange}
           disabled={!selectedState}
         >
           <option value="">Select a City</option>
@@ -1518,7 +1533,7 @@ const User = () => {
         <select
           className="p-3 rounded-xl border border-gray-300 shadow-sm"
           value={selectedHotel}
-          onChange={(e) => setSelectedHotel(e.target.value)}
+          onChange={handleHotelChange}
           disabled={!selectedCity}
         >
           <option value="">Select a Hotel</option>
@@ -1566,10 +1581,15 @@ const User = () => {
           sortedHotels.map(hotel => (
             <div
               key={hotel._id}
-              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition duration-300 p-4"
+              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden"
             >
-              <h2 className="text-xl font-semibold text-indigo-700">{hotel.name}</h2>
-              <p className="text-gray-600">📍 {hotel.city}, {hotel.state?.name}</p>
+              <div className="p-4 space-y-2">
+                <h3 className="text-xl font-bold text-indigo-700">{hotel.name}</h3>
+                <p className="text-gray-700">📍 Address: {hotel.address}</p>
+                <p className="text-gray-700">📞 Contact: {hotel.contactNumber}</p>
+                <p className="text-gray-700">📧 Email: {hotel.email}</p>
+                <p className="text-gray-700">🏙️ City: {hotel.city}</p>
+              </div>
             </div>
           ))
         )}
